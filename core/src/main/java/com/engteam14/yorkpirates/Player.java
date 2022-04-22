@@ -9,6 +9,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
+import java.sql.Time;
+
 public class Player extends GameObject {
 
     // Player constants
@@ -16,6 +18,10 @@ public class Player extends GameObject {
     private static final float CAMERA_SLACK = 0.1f; // What percentage of the screen the player can move in before the camera follows.
     private static final float SPEED =70f; // Player movement speed.
     private static final int HEALTH = 200;
+    private static final int DAMAGE_POWERUP_VALUE = 1000;
+    private static final int DEFUALT_DAMAGE = 20;
+    private static final int DAMAGE_POWERUP_TOTAL_LENGTH = 10000;
+    private static final int IMMUNITY_POWERUP_LENGTH = 10000;
 
     // Movement calculation values
     private int previousDirectionX;
@@ -27,6 +33,12 @@ public class Player extends GameObject {
     private float splashTime;
     private long timeLastHit;
     private boolean doBloodSplash = false;
+
+    private float playerDamage = 20;
+    private long damageIncreaseStart;
+    private boolean immune = false;
+
+    private long immunityStart;
 
     /**
      * Generates a generic object within the game with animated frame(s) and a hit-box.
@@ -108,6 +120,14 @@ public class Player extends GameObject {
             if(currentHealth > maxHealth) currentHealth = maxHealth;
             playerHealth.resize(currentHealth);
         }
+
+        if(TimeUtils.timeSinceMillis(damageIncreaseStart) > DAMAGE_POWERUP_TOTAL_LENGTH){
+            playerDamage = DEFUALT_DAMAGE;
+        }
+
+        if (TimeUtils.timeSinceMillis(immunityStart) > IMMUNITY_POWERUP_LENGTH){
+            immune = false;
+        }
     }
 
     /**
@@ -145,6 +165,9 @@ public class Player extends GameObject {
     @Override
     public void takeDamage(GameScreen screen, float damage, String projectileTeam){
         timeLastHit = TimeUtils.millis();
+        if (immune == true){
+            damage = 0;
+        }
         currentHealth -= damage;
         doBloodSplash = true;
 
@@ -191,5 +214,18 @@ public class Player extends GameObject {
 
     public float getDistance() {
         return distance;
+    }
+    public float getPlayerDamage(){ return playerDamage;}
+    public void damageIncrease(){
+        this.playerDamage = DAMAGE_POWERUP_VALUE;
+        this.damageIncreaseStart = TimeUtils.millis();
+    }
+    public void giveMaxHealth(){
+        this.setCurrentHealth(HEALTH);
+        playerHealth.resize(currentHealth);
+    }
+    public void immunityPowerup(){
+        this.immunityStart = TimeUtils.millis();
+        immune = true;
     }
 }

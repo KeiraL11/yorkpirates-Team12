@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -27,7 +26,7 @@ public class GameScreen extends ScreenAdapter {
     public ScoreManager loot;
 
     //PowerUps
-    public Array<Power> powerups;
+    public Array<PowerUps> powerups;
 
     // Colleges
     public Array<College> colleges;
@@ -101,21 +100,38 @@ public class GameScreen extends ScreenAdapter {
 
         //PowerUps
         powerups = new Array<>();
-        Power newPower;
+        PowerUps newPower;
         Array<Texture> powerSprites = new Array<>();
 
         //Add Give More Damage PowerUp
-        powerSprites.add(new Texture("give_more_damage.png"),
-                new Texture("give_more_damage_grey.png"));
-        newPower = new Power(powerSprites, 700, 525, 0.7f, "GiveMoreDamage");
+        powerSprites.add(new Texture("give_more_damage.png"));
+        powerSprites.add(new Texture("give_more_damage_grey.png"));
+        newPower = new PowerUps(powerSprites, 1000f, 1000f, 500f, "GiveMoreDamage");
         //newPower.addPower(-70, -20, 60); Think this was to add separately - do not want this.
         powerups.add(newPower);
         powerSprites.clear();
 
-        //Add Take More Damage PowerUp
-//        powerSprites.add(new Texture("take_more_damage.png"),
-//                new Texture("take_more_damage_grey.png"));
+//        //Add Take More Damage PowerUp
+//        powerSprites.add(new Texture("take_more_damage.png"));
 //        newPower = new Power(powerSprites, 700, 525, 0.7f, "TakeMoreDamage");
+//        powerups.add(newPower);
+//        powerSprites.clear();
+//
+//        //Add Immunity
+        powerSprites.add(new Texture("immunity_grey.png"));
+        newPower = new PowerUps(powerSprites, 100f, 1500f, 500f, "Immunity");
+        powerups.add(newPower);
+        powerSprites.clear();
+//
+        //Add Health Restore
+        powerSprites.add(new Texture("health_restore.png"));
+        newPower = new PowerUps(powerSprites, 1f,1000, 725, "HealthRestore");
+        powerups.add(newPower);
+        powerSprites.clear();
+//
+//        //Add Speed
+//        powerSprites.add(new Texture("speed.png"));
+//        newPower = new Power(powerSprites, 1100, 525, 1f, "Speed");
 //        powerups.add(newPower);
 //        powerSprites.clear();
 
@@ -204,6 +220,12 @@ public class GameScreen extends ScreenAdapter {
         for(int i = 0; i < colleges.size; i++) {
             colleges.get(i).draw(game.batch, 0);
         }
+
+
+        for (int i = 0; i < powerups.size; i++) {
+            powerups.get(i).draw(game.batch, 0);
+        }
+
         game.batch.end();
 
         // Draw HUD
@@ -224,7 +246,9 @@ public class GameScreen extends ScreenAdapter {
         for(int i = 0; i < colleges.size; i++) {
             colleges.get(i).update(this);
         }
-
+        for(int i = 0; i < powerups.size; i++){
+            powerups.get(i).update(this);
+        }
         // Check for projectile creation, then call projectile update
         if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
             Vector3 mouseVector = new Vector3(Gdx.input.getX(), Gdx.input.getY(),0);

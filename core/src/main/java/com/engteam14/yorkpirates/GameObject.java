@@ -63,6 +63,10 @@ public class GameObject {
         maxHealth = mh;
         currentHealth = maxHealth;
     }
+    int getMaxHealth(){return maxHealth;}
+    void setCurrentHealth(int health){
+        currentHealth = health;
+    }
 
     /**
      * Called when a projectile hits the object.

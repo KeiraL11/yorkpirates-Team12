@@ -37,6 +37,10 @@ public class PowerUps extends GameObject{
             powerImages.add(frames.get(i));
         }
     }
+    /**
+     * This will see if each powerup has overlapped the player's hitbox. If so, it will call its method.
+     * @param screen    The main game screen.
+     */
     void update(GameScreen screen){
         if(overlaps(screen.getPlayer().hitBox)){
             destroy(screen);
@@ -57,6 +61,10 @@ public class PowerUps extends GameObject{
             }
         }
     }
+    /**
+     * Called when the powerup needs to be destroyed.
+     * @param screen    The main game screen.
+     */
     private void destroy(GameScreen screen){
         screen.powerups.removeValue(this,true);
     }

@@ -221,7 +221,7 @@ public class GameScreen extends ScreenAdapter {
             colleges.get(i).draw(game.batch, 0);
         }
 
-
+        //Draw powerups
         for (int i = 0; i < powerups.size; i++) {
             powerups.get(i).draw(game.batch, 0);
         }

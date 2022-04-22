@@ -22,6 +22,11 @@ public class Player extends GameObject {
     private static final int DEFUALT_DAMAGE = 20;
     private static final int DAMAGE_POWERUP_TOTAL_LENGTH = 10000;
     private static final int IMMUNITY_POWERUP_LENGTH = 10000;
+    private static final int TAKE_DAMAGE_INCREASE = 350;
+    //private static final float SPEED_POWERUP_NORMAL = 1;
+    //private static final float SPEED_POWERUP_MULTIPLIER = 2;
+    private static final int SPEED_POWERUP_TOTAL_LENGTH = 25000;
+    private int speedMultiplier = 1;
 
     // Movement calculation values
     private int previousDirectionX;
@@ -37,7 +42,8 @@ public class Player extends GameObject {
     private float playerDamage = 20;
     private long damageIncreaseStart;
     private boolean immune = false;
-
+    private long takeMoreDamageStart;
+    private long speedStart;
     private long immunityStart;
 
     /**
@@ -78,7 +84,7 @@ public class Player extends GameObject {
 
         // Calculate collision && movement
         if (horizontal != 0 || vertical != 0){
-            move(SPEED *horizontal, SPEED *vertical);
+            move(speedMultiplier*SPEED*horizontal, speedMultiplier*SPEED*vertical);
             previousDirectionX = horizontal;
             previousDirectionY = vertical;
             if (safeMove(screen.getMain().edges)) {
@@ -114,19 +120,32 @@ public class Player extends GameObject {
                 splashTime += 1;
             }
         }
-
+        //If it has been 10 seconds since the player was last hit, then health will increase.
         if (TimeUtils.timeSinceMillis(timeLastHit) > 10000){
             currentHealth += 0.03;
+            //If current health goes above the max, then it will remain at max health.
             if(currentHealth > maxHealth) currentHealth = maxHealth;
             playerHealth.resize(currentHealth);
         }
 
+        //Timing how long the GiveMoreDamage powerup lasts
         if(TimeUtils.timeSinceMillis(damageIncreaseStart) > DAMAGE_POWERUP_TOTAL_LENGTH){
             playerDamage = DEFUALT_DAMAGE;
         }
 
+        //Timing how long the Immunity powerup lasts
         if (TimeUtils.timeSinceMillis(immunityStart) > IMMUNITY_POWERUP_LENGTH){
             immune = false;
+        }
+
+        ////Timing how long the TakeMoreDamage powerup lasts
+        if (TimeUtils.timeSinceMillis(takeMoreDamageStart) > DAMAGE_POWERUP_TOTAL_LENGTH){
+            setMaxHealth(HEALTH);
+        }
+
+        //Timing how long the Speed powerup lasts
+        if (TimeUtils.timeSinceMillis(speedStart) > SPEED_POWERUP_TOTAL_LENGTH){
+            speedMultiplier = 1;
         }
     }
 
@@ -215,7 +234,9 @@ public class Player extends GameObject {
     public float getDistance() {
         return distance;
     }
-    public float getPlayerDamage(){ return playerDamage;}
+    public float getPlayerDamage() {
+        return playerDamage;
+    }
     public void damageIncrease(){
         this.playerDamage = DAMAGE_POWERUP_VALUE;
         this.damageIncreaseStart = TimeUtils.millis();
@@ -227,5 +248,13 @@ public class Player extends GameObject {
     public void immunityPowerup(){
         this.immunityStart = TimeUtils.millis();
         immune = true;
+    }
+    public void takeMoreDamagePowerup(){
+        this.takeMoreDamageStart = TimeUtils.millis();
+        setMaxHealth(TAKE_DAMAGE_INCREASE);
+    }
+    public void speedPowerup(){
+        this.speedStart = TimeUtils.millis();
+        speedMultiplier = 2;
     }
 }

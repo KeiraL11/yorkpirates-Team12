@@ -28,7 +28,7 @@ public class PowerUps extends GameObject{
      * @param powerup   The powerup.
      */
     PowerUps(Array<Texture> frames, float fps, float x, float y, String powerup){
-        super(frames, fps, x, y, (float) (frames.get(0).getWidth()*0.5), (float)(frames.get(0).getHeight()*0.5), "");
+        super(frames, fps, x, y, (float) (frames.get(0).getWidth()*0.05), (float)(frames.get(0).getHeight()*0.05), "");
 
         //changeImage(frames,fps);
         this.powerup = powerup;
@@ -48,6 +48,12 @@ public class PowerUps extends GameObject{
             }
             if(this.powerup == "Immunity"){
                 screen.getPlayer().immunityPowerup();
+            }
+            if(this.powerup == "TakeMoreDamage"){
+                screen.getPlayer().takeMoreDamagePowerup();
+            }
+            if(this.powerup == "Speed"){
+                screen.getPlayer().speedPowerup();
             }
         }
     }

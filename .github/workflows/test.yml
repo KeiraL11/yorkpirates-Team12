@@ -35,7 +35,7 @@ jobs:
       with:
         arguments: tests:test
     - name: Publish Unit Test Results
-      uses: mikepenz/action-junit-report@v3
+      uses: EnricoMi/publish-unit-test-result-action@v1
       if: always()
       with:
-        report_paths: '/lwjgl/test-results/test/TEST-*.xml'
+        files: "test-results/**/*.xml"

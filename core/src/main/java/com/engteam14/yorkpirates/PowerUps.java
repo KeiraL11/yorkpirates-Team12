@@ -28,7 +28,7 @@ public class PowerUps extends GameObject{
      * @param powerup   The powerup.
      */
     PowerUps(Array<Texture> frames, float fps, float x, float y, String powerup){
-        super(frames, fps, x, y, (float) (frames.get(0).getWidth()*0.5), (float)(frames.get(0).getHeight()*0.5), "");
+        super(frames, fps, x, y, (float) (frames.get(0).getWidth()*0.05), (float)(frames.get(0).getHeight()*0.05), "");
 
         //changeImage(frames,fps);
         this.powerup = powerup;
@@ -37,6 +37,10 @@ public class PowerUps extends GameObject{
             powerImages.add(frames.get(i));
         }
     }
+    /**
+     * This will see if each powerup has overlapped the player's hitbox. If so, it will call its method.
+     * @param screen    The main game screen.
+     */
     void update(GameScreen screen){
         if(overlaps(screen.getPlayer().hitBox)){
             destroy(screen);
@@ -49,8 +53,18 @@ public class PowerUps extends GameObject{
             if(this.powerup == "Immunity"){
                 screen.getPlayer().immunityPowerup();
             }
+            if(this.powerup == "TakeMoreDamage"){
+                screen.getPlayer().takeMoreDamagePowerup();
+            }
+            if(this.powerup == "Speed"){
+                screen.getPlayer().speedPowerup();
+            }
         }
     }
+    /**
+     * Called when the powerup needs to be destroyed.
+     * @param screen    The main game screen.
+     */
     private void destroy(GameScreen screen){
         screen.powerups.removeValue(this,true);
     }

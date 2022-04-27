@@ -35,7 +35,9 @@ jobs:
       with:
         arguments: tests:test
     - name: Publish Unit Test Results
-      uses: mikepenz/action-junit-report@v3
-      if: always()
+      uses: actions/upload-artifact@v2  # upload test results
+      if: success() || failure()        # run this step even if previous step failed
       with:
-        report_paths: '/build/test-results/test/TEST-*.xml'
+          name: test-results
+          path: jest-junit.xml
+      

@@ -278,4 +278,54 @@ public class AssetTests {
         assertTrue("This test will only pass if transparent.png exists",
                 Gdx.files.internal("../assets/transparent.png").exists());
     }
+    @Test
+    public void testSkinFontExists() {
+        assertTrue("This test will only pass if font-export.fnt exists",
+                Gdx.files.internal("../assets/Skin/font-export.fnt").exists());
+    }
+    @Test
+    public void testSkinFontTitleExists() {
+        assertTrue("This test will only pass if font-title-export.fnt exists",
+                Gdx.files.internal("../assets/Skin/font-title-export.fnt").exists());
+    }
+    @Test
+    public void testSkinRalewayExists() {
+        assertTrue("This test will only pass if Raleway-Bold(5).fnt exists",
+                Gdx.files.internal("../assets/Skin/Raleway-Bold(5).fnt").exists());
+    }
+    @Test
+    public void testSkinRaleway6Exists() {
+        assertTrue("This test will only pass if Raleway-Bold(6).fnt exists",
+                Gdx.files.internal("../assets/Skin/Raleway-Bold(6).fnt").exists());
+    }
+    @Test
+    public void testSkinRalewayBoldExists() {
+        assertTrue("This test will only pass if Raleway-Bold.ttf exists",
+                Gdx.files.internal("../assets/Skin/Raleway-Bold.ttf").exists());
+    }
+    @Test
+    public void testSkinExists() {
+        assertTrue("This test will only pass if YorkPiratesSkin.atlas exists",
+                Gdx.files.internal("../assets/Skin/YorkPiratesSkin.atlas").exists());
+    }
+    @Test
+    public void testSkinJSONExists() {
+        assertTrue("This test will only pass if YorkPiratesSkin.json exists",
+                Gdx.files.internal("../assets/Skin/YorkPiratesSkin.json").exists());
+    }
+    @Test
+    public void testSkinPNGExists() {
+        assertTrue("This test will only pass if YorkPiratesSkin.png exists",
+                Gdx.files.internal("../assets/Skin/YorkPiratesSkin.png").exists());
+    }
+    @Test
+    public void testMapExists() {
+        assertTrue("This test will only pass if FINAL_MAP.tmx exists",
+                Gdx.files.internal("../assets/FINAL_MAP2.0/FINAL_MAP.tmx").exists());
+    }
+    @Test
+    public void testMapTerrainExists() {
+        assertTrue("This test will only pass if FINAL_MAP_Terrain.tmx exists",
+                Gdx.files.internal("../assets/FINAL_MAP2.0/FINAL_MAP_Terrain.csv").exists());
+    }
 }

@@ -272,6 +272,9 @@ public class GameScreen extends ScreenAdapter {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && elapsedTime - lastPause > 0.1f){
             gamePause();
         }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.H)){
+            player.printStats();
+        }
     }
 
     /**
@@ -329,6 +332,10 @@ public class GameScreen extends ScreenAdapter {
      * @return  The player.
      */
     public Player getPlayer() { return player; }
+    public void setEasy(){player.setEasy();}
+    public void setNormal(){player.setNormal();}
+    public void setHard(){player.setHard();}
+
 
     /**
      * Get the main game class.

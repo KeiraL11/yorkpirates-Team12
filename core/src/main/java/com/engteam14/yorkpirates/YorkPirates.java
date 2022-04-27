@@ -23,8 +23,8 @@ public class YorkPirates extends Game {
 	public Animation<TextureRegion> enter;
 
 	// Constants
-	public static final boolean DEBUG_ON = false; // Determines if the game runs in DEBUG mode.
-	private static final int SCREEN_TO_PIXEL_RATIO = 16; // Determines the pixel ratio of the game.
+	public static final boolean DEBUG_ON = true; // Determines if the game runs in DEBUG mode.
+	private static final int SCREEN_TO_PIXEL_RATIO = 64; // Determines the pixel ratio of the game.
 
 	/**
 	 * Initialises base game class.

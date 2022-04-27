@@ -9,8 +9,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
-import java.sql.Time;
-
 public class Player extends GameObject {
 
     // Player constants
@@ -19,9 +17,12 @@ public class Player extends GameObject {
     private static final float SPEED =70f; // Player movement speed.
     private static final int HEALTH = 200;
     private static final int DAMAGE_POWERUP_VALUE = 1000;
-    private static final int DEFUALT_DAMAGE = 20;
     private static final int DAMAGE_POWERUP_TOTAL_LENGTH = 10000;
     private static final int IMMUNITY_POWERUP_LENGTH = 10000;
+
+    private static int timeBeforeRegen = 10000;
+    private static double regenAmount = 0.03;
+    private static float enemyDamageMultiplier = 1;
 
     // Movement calculation values
     private int previousDirectionX;
@@ -34,6 +35,7 @@ public class Player extends GameObject {
     private long timeLastHit;
     private boolean doBloodSplash = false;
 
+    private float defaultDamage = 20;
     private float playerDamage = 20;
     private long damageIncreaseStart;
     private boolean immune = false;
@@ -115,14 +117,14 @@ public class Player extends GameObject {
             }
         }
 
-        if (TimeUtils.timeSinceMillis(timeLastHit) > 10000){
-            currentHealth += 0.03;
+        if (TimeUtils.timeSinceMillis(timeLastHit) > timeBeforeRegen){
+            currentHealth += regenAmount;
             if(currentHealth > maxHealth) currentHealth = maxHealth;
             playerHealth.resize(currentHealth);
         }
 
         if(TimeUtils.timeSinceMillis(damageIncreaseStart) > DAMAGE_POWERUP_TOTAL_LENGTH){
-            playerDamage = DEFUALT_DAMAGE;
+            playerDamage = defaultDamage;
         }
 
         if (TimeUtils.timeSinceMillis(immunityStart) > IMMUNITY_POWERUP_LENGTH){
@@ -168,7 +170,7 @@ public class Player extends GameObject {
         if (immune == true){
             damage = 0;
         }
-        currentHealth -= damage;
+        currentHealth -= damage * enemyDamageMultiplier;
         doBloodSplash = true;
 
         // Health-bar reduction
@@ -227,5 +229,40 @@ public class Player extends GameObject {
     public void immunityPowerup(){
         this.immunityStart = TimeUtils.millis();
         immune = true;
+    }
+
+    /**
+     * Called to set the difficulty at the start of the game.
+     */
+    public void setEasy(){
+        regenAmount = 0.06;
+        timeBeforeRegen = 5000;
+        enemyDamageMultiplier = 1;
+        defaultDamage = 30;
+        setMaxHealth(400);
+    }
+    public void setNormal(){
+        regenAmount = 0.03;
+        timeBeforeRegen = 10000;
+        enemyDamageMultiplier = 1.5f;
+        defaultDamage = 20;
+        setMaxHealth(300);
+    }
+    public void setHard(){
+        regenAmount = 0;
+        timeBeforeRegen = 10000;
+        enemyDamageMultiplier = 2f;
+        defaultDamage = 15;
+        setMaxHealth(200);
+    }
+
+    public void printStats(){
+        System.out.println("Regen: " + regenAmount);
+        System.out.println("timeBeforeRegen: " + timeBeforeRegen);
+        System.out.println("enemydmgmult: " + enemyDamageMultiplier);
+        System.out.println("def dmg: " + defaultDamage);
+        System.out.println("maxhealth: " + maxHealth);
+        System.out.println("x: " + this.x + " y: " + y);
+
     }
 }

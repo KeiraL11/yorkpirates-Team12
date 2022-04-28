@@ -18,11 +18,15 @@ public class PauseScreen extends ScreenAdapter {
 
     private final YorkPirates game;
     private final GameScreen screen;
+
+    private final ShopScreen shopScreen;
     private final Stage pauseStage;
 
     public PauseScreen(YorkPirates game, GameScreen screen){
         this.game = game;
         this.screen = screen;
+
+        shopScreen = new ShopScreen(game, screen,this);
 
         // Generate skin
         TextureAtlas atlas;
@@ -45,6 +49,13 @@ public class PauseScreen extends ScreenAdapter {
         title.setScaling(Scaling.fit);
 
         // Generate buttons
+        TextButton shop = new TextButton("Shop", skin);
+        shop.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(shopScreen);
+            }
+        });
+
         TextButton resume = new TextButton("Resume", skin);
         resume.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -90,6 +101,8 @@ public class PauseScreen extends ScreenAdapter {
 
         // Add buttons to table
         table.row();
+        table.add(shop).expand();
+        table.row();
         table.add(resume).expand();
         table.row();
         table.add(restart).expand();
@@ -128,6 +141,17 @@ public class PauseScreen extends ScreenAdapter {
      * Generates a HUD object within the game that controls elements of the UI.
      */
     private void gameContinue() {
+        if (shopScreen.immunity_bought) {
+            screen.getPlayer().immunityPowerup();
+        }
+
+        if (shopScreen.give_more_damage_bought) {
+            screen.getPlayer().damageIncrease();
+        }
+
+        if (shopScreen.take_less_damage_bought) {
+            screen.getPlayer().takeMoreDamagePowerup();
+        }
         screen.setPaused(false);
         game.setScreen(screen);
     }

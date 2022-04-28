@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
 import java.sql.Time;
+import java.time.LocalDateTime;
 
 public class Player extends GameObject {
 
@@ -17,9 +18,9 @@ public class Player extends GameObject {
     private static final int POINT_FREQUENCY = 1000; // How often the player gains points by moving.
     private static final float CAMERA_SLACK = 0.1f; // What percentage of the screen the player can move in before the camera follows.
     private static final float SPEED =70f; // Player movement speed.
-    private static final int HEALTH = 200;
+    public static final int HEALTH = 200;
     private static final int DAMAGE_POWERUP_VALUE = 1000;
-    private static final int DEFUALT_DAMAGE = 20;
+    public static final int DEFUALT_DAMAGE = 20;
     private static final int DAMAGE_POWERUP_TOTAL_LENGTH = 10000;
     private static final int IMMUNITY_POWERUP_LENGTH = 10000;
     private static final int TAKE_DAMAGE_INCREASE = 350;
@@ -74,6 +75,10 @@ public class Player extends GameObject {
      * @param camera    The player camera.
      */
     public void update(GameScreen screen, OrthographicCamera camera){
+        System.out.println(LocalDateTime.now().getMinute());
+        System.out.println(speedMultiplier);
+        //System.out.println("current Time: " + System.currentTimeMillis());
+        //System.out.println("Immunity start time: " + TimeUtils.timeSinceMillis(immunityStart));
         Vector2 oldPos = new Vector2(x,y); // Stored for next-frame calculations
 
         // Get input movement
@@ -138,8 +143,8 @@ public class Player extends GameObject {
             immune = false;
         }
 
-        ////Timing how long the TakeMoreDamage powerup lasts
-        if (TimeUtils.timeSinceMillis(takeMoreDamageStart) > DAMAGE_POWERUP_TOTAL_LENGTH){
+        //Timing how long the TakeMoreDamage powerup lasts
+        if (TimeUtils.timeSinceMillis(takeMoreDamageStart) < DAMAGE_POWERUP_TOTAL_LENGTH){
             setMaxHealth(HEALTH);
         }
 
@@ -147,6 +152,7 @@ public class Player extends GameObject {
         if (TimeUtils.timeSinceMillis(speedStart) > SPEED_POWERUP_TOTAL_LENGTH){
             speedMultiplier = 1;
         }
+
     }
 
     /**

@@ -28,6 +28,10 @@ public class ScoreManager {
 
     }
 
+    public void TakeAway(int amount){
+        score -= amount;
+    }
+
     /**
      *  Gets the score value in integer form.
      * @return  the score.

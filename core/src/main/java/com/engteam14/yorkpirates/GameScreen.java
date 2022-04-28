@@ -104,22 +104,22 @@ public class GameScreen extends ScreenAdapter {
         Array<Texture> powerSprites = new Array<>();
 
         //Add Give More Damage PowerUp
-        powerSprites.add(new Texture("give_more_damage.png"));
-        powerSprites.add(new Texture("give_more_damage_grey.png"));
-        newPower = new PowerUps(powerSprites, 1000f, 1000f, 1500, "GiveMoreDamage");
-        //newPower.addPower(-70, -20, 60); Think this was to add separately - do not want this.
+//        powerSprites.add(new Texture("give_more_damage.png"));
+//        powerSprites.add(new Texture("give_more_damage_grey.png"));
+//        newPower = new PowerUps(powerSprites, 1000f, 1000f, 1500, "GiveMoreDamage");
+//        //newPower.addPower(-70, -20, 60); Think this was to add separately - do not want this.
+//        powerups.add(newPower);
+//        powerSprites.clear();
+
+        //Add Take Speed PowerUp
+        powerSprites.add(new Texture("speed_grey.png"));
+        newPower = new PowerUps(powerSprites, 1000f, 3000, 3000, "Speed");
         powerups.add(newPower);
         powerSprites.clear();
 
-        //Add Take More Damage PowerUp
-        powerSprites.add(new Texture("take_more_damage_grey.png"));
-        newPower = new PowerUps(powerSprites, 1000f, 3000, 3000, "TakeMoreDamage");
-        powerups.add(newPower);
-        powerSprites.clear();
-
-        //Add Immunity
-        powerSprites.add(new Texture("immunity_grey.png"));
-        newPower = new PowerUps(powerSprites, 100f, 1500f, 2000f, "Immunity");
+        //Add Health Restore
+        powerSprites.add(new Texture("health_restore.png"));
+        newPower = new PowerUps(powerSprites, 100f, 1500f, 2000f, "HealthRestore");
         powerups.add(newPower);
         powerSprites.clear();
 //

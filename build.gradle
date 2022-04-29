@@ -69,7 +69,7 @@ allprojects {
 project(":core") {
 	apply plugin: "java-library"
 
-	sourceSets.test.java.srcDirs = ["src/"]
+	sourceSets.test.java.srcDirs = ["src/test"]
 
 	dependencies {
 		api "com.badlogicgames.gdx:gdx:$gdxVersion"

@@ -38,6 +38,6 @@ jobs:
       uses: actions/upload-artifact@v3
       if: always()
       with:
-        name: package
-        path: lwjgl3/build/libs/*.xml
+        name: Unit Test Report
+        path: '**/build/test-results/test/TEST-*.xml'
       

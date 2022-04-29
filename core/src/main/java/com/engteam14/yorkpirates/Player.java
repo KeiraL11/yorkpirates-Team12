@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
 import java.sql.Time;
+import java.time.LocalDateTime;
 
 public class Player extends GameObject {
 
@@ -17,9 +18,9 @@ public class Player extends GameObject {
     private static final int POINT_FREQUENCY = 1000; // How often the player gains points by moving.
     private static final float CAMERA_SLACK = 0.1f; // What percentage of the screen the player can move in before the camera follows.
     private static final float SPEED =70f; // Player movement speed.
-    private static final int HEALTH = 200;
+    public static final int HEALTH = 200;
     private static final int DAMAGE_POWERUP_VALUE = 1000;
-    private static final int DEFUALT_DAMAGE = 20;
+    public static final int DEFUALT_DAMAGE = 20;
     private static final int DAMAGE_POWERUP_TOTAL_LENGTH = 10000;
     private static final int IMMUNITY_POWERUP_LENGTH = 10000;
     private static final int TAKE_DAMAGE_INCREASE = 350;
@@ -27,6 +28,10 @@ public class Player extends GameObject {
     //private static final float SPEED_POWERUP_MULTIPLIER = 2;
     private static final int SPEED_POWERUP_TOTAL_LENGTH = 25000;
     private int speedMultiplier = 1;
+
+    private static int timeBeforeRegen = 10000;
+    private static double regenAmount = 0.03;
+    private static float enemyDamageMultiplier = 1;
 
     // Movement calculation values
     private int previousDirectionX;
@@ -45,6 +50,9 @@ public class Player extends GameObject {
     private long takeMoreDamageStart;
     private long speedStart;
     private long immunityStart;
+
+    private float defaultDamage = 20;
+
 
     /**
      * Generates a generic object within the game with animated frame(s) and a hit-box.
@@ -138,8 +146,8 @@ public class Player extends GameObject {
             immune = false;
         }
 
-        ////Timing how long the TakeMoreDamage powerup lasts
-        if (TimeUtils.timeSinceMillis(takeMoreDamageStart) > DAMAGE_POWERUP_TOTAL_LENGTH){
+        //Timing how long the TakeMoreDamage powerup lasts
+        if (TimeUtils.timeSinceMillis(takeMoreDamageStart) < DAMAGE_POWERUP_TOTAL_LENGTH){
             setMaxHealth(HEALTH);
         }
 
@@ -147,6 +155,7 @@ public class Player extends GameObject {
         if (TimeUtils.timeSinceMillis(speedStart) > SPEED_POWERUP_TOTAL_LENGTH){
             speedMultiplier = 1;
         }
+
     }
 
     /**
@@ -156,7 +165,7 @@ public class Player extends GameObject {
      */
     private Boolean safeMove(Array<Array<Boolean>> edges){
         return (
-                        edges.get((int)((y+height/2)/16)).get((int)((x+width/2)/16)) &&
+                edges.get((int)((y+height/2)/16)).get((int)((x+width/2)/16)) &&
                         edges.get((int)((y+height/2)/16)).get((int)((x-width/2)/16)) &&
                         edges.get((int)((y-height/2)/16)).get((int)((x+width/2)/16)) &&
                         edges.get((int)((y-height/2)/16)).get((int)((x-width/2)/16))
@@ -256,5 +265,40 @@ public class Player extends GameObject {
     public void speedPowerup(){
         this.speedStart = TimeUtils.millis();
         speedMultiplier = 2;
+    }
+
+    /**
+     * Called to set the difficulty at the start of the game.
+     */
+    public void setEasy(){
+        regenAmount = 0.06;
+        timeBeforeRegen = 5000;
+        enemyDamageMultiplier = 1;
+        defaultDamage = 30;
+        setMaxHealth(400);
+    }
+    public void setNormal(){
+        regenAmount = 0.03;
+        timeBeforeRegen = 10000;
+        enemyDamageMultiplier = 1.5f;
+        defaultDamage = 20;
+        setMaxHealth(300);
+    }
+    public void setHard(){
+        regenAmount = 0;
+        timeBeforeRegen = 10000;
+        enemyDamageMultiplier = 2f;
+        defaultDamage = 15;
+        setMaxHealth(200);
+    }
+
+    public void printStats(){
+        System.out.println("Regen: " + regenAmount);
+        System.out.println("timeBeforeRegen: " + timeBeforeRegen);
+        System.out.println("enemydmgmult: " + enemyDamageMultiplier);
+        System.out.println("def dmg: " + defaultDamage);
+        System.out.println("maxhealth: " + maxHealth);
+        System.out.println("x: " + this.x + " y: " + y);
+
     }
 }

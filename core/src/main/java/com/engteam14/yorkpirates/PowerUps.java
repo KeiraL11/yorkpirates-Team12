@@ -43,20 +43,25 @@ public class PowerUps extends GameObject{
      */
     void update(GameScreen screen){
         if(overlaps(screen.getPlayer().hitBox)){
-            destroy(screen);
-            if (this.powerup == "GiveMoreDamage"){
+            //destroy(screen);
+            if (this.powerup == "GiveMoreDamage" && screen.getPlayer().getPlayerDamage() == screen.getPlayer().DEFUALT_DAMAGE){
+                destroy(screen);
                 screen.getPlayer().damageIncrease();
             }
-            if(this.powerup == "HealthRestore"){
+            if(this.powerup == "HealthRestore" && screen.getPlayer().currentHealth < screen.getPlayer().HEALTH){
+                destroy(screen);
                 screen.getPlayer().giveMaxHealth();
             }
-            if(this.powerup == "Immunity"){
+            if(this.powerup == "Immunity" && screen.getPlayer().currentHealth < screen.getPlayer().HEALTH){
+                destroy(screen);
                 screen.getPlayer().immunityPowerup();
             }
             if(this.powerup == "TakeMoreDamage"){
+                destroy(screen);
                 screen.getPlayer().takeMoreDamagePowerup();
             }
             if(this.powerup == "Speed"){
+                destroy(screen);
                 screen.getPlayer().speedPowerup();
             }
         }

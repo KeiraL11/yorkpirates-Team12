@@ -63,12 +63,24 @@ public class TitleScreen extends ScreenAdapter {
             }});
 
         // Generate buttons
-        ImageTextButton startButton = new ImageTextButton("Play", skin);
+        ImageTextButton easyButton = new ImageTextButton("Easy", skin);
+        ImageTextButton normalButton = new ImageTextButton("Normal", skin);
+        ImageTextButton hardButton = new ImageTextButton("Hard", skin);
         ImageTextButton quitButton = new ImageTextButton("Exit Game", skin, "Quit");
 
-        startButton.addListener(new ClickListener() {
+        easyButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                gameStart();
+                setEasy();
+            }
+        });
+        normalButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                setNormal();
+            }
+        });
+        hardButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                setHard();
             }
         });
         quitButton.addListener(new ClickListener() {
@@ -91,7 +103,11 @@ public class TitleScreen extends ScreenAdapter {
 
         // Add buttons to table
         table.row();
-        table.add(startButton).expand();
+        table.add(easyButton).expand();
+        table.row();
+        table.add(normalButton).expand();
+        table.row();
+        table.add(hardButton).expand();
         table.row();
         table.add(quitButton).expand();
 
@@ -128,6 +144,7 @@ public class TitleScreen extends ScreenAdapter {
      */
     private void update(){
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)){
+            nextGame.setNormal();
             gameStart();
         }
     }
@@ -148,5 +165,20 @@ public class TitleScreen extends ScreenAdapter {
         nextGame.setPaused(false);
         nextGame.setPlayerName(playerName);
         game.setScreen(nextGame);
+    }
+    private void setEasy(){
+        System.out.println("Easy");
+        nextGame.setEasy();
+        gameStart();
+    }
+    private void setNormal(){
+        System.out.println("Normal");
+        nextGame.setNormal();
+        gameStart();
+    }
+    private void setHard(){
+        System.out.println("Hard");
+        nextGame.setHard();
+        gameStart();
     }
 }

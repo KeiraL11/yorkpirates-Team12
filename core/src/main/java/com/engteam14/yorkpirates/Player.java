@@ -9,24 +9,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
-import java.sql.Time;
-
 public class Player extends GameObject {
 
     // Player constants
     private static final int POINT_FREQUENCY = 1000; // How often the player gains points by moving.
     private static final float CAMERA_SLACK = 0.1f; // What percentage of the screen the player can move in before the camera follows.
-    private static final float SPEED =70f; // Player movement speed.
+    private static float SPEED =70f; // Player movement speed.
     private static final int HEALTH = 200;
-    private static final int DAMAGE_POWERUP_VALUE = 1000;
-    private static final int DEFUALT_DAMAGE = 20;
-    private static final int DAMAGE_POWERUP_TOTAL_LENGTH = 10000;
-    private static final int IMMUNITY_POWERUP_LENGTH = 10000;
-    private static final int TAKE_DAMAGE_INCREASE = 350;
-    //private static final float SPEED_POWERUP_NORMAL = 1;
-    //private static final float SPEED_POWERUP_MULTIPLIER = 2;
-    private static final int SPEED_POWERUP_TOTAL_LENGTH = 25000;
-    private int speedMultiplier = 1;
+    public Array<String> newRow1;
 
     // Movement calculation values
     private int previousDirectionX;
@@ -38,13 +28,7 @@ public class Player extends GameObject {
     private float splashTime;
     private long timeLastHit;
     private boolean doBloodSplash = false;
-
-    private float playerDamage = 20;
-    private long damageIncreaseStart;
-    private boolean immune = false;
-    private long takeMoreDamageStart;
-    private long speedStart;
-    private long immunityStart;
+    private float weatherMovement = 1;
 
     /**
      * Generates a generic object within the game with animated frame(s) and a hit-box.
@@ -75,16 +59,22 @@ public class Player extends GameObject {
      */
     public void update(GameScreen screen, OrthographicCamera camera){
         Vector2 oldPos = new Vector2(x,y); // Stored for next-frame calculations
-
         // Get input movement
         int horizontal = ((Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) ? 1 : 0)
                 - ((Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) ? 1 : 0);
         int vertical = ((Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)) ? 1 : 0)
                 - ((Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)) ? 1 : 0);
-
-        // Calculate collision && movement
-        if (horizontal != 0 || vertical != 0){
-            move(speedMultiplier*SPEED*horizontal, speedMultiplier*SPEED*vertical);
+        
+        weatherMovement = 1;
+        for(int i = 0; i<screen.weatherArray.size; i++){
+            if (this.overlaps(screen.weatherArray.get(i).hitBox)){
+                //weatherArray.get(i).effect();
+                weatherMovement = 0.5f;
+            }
+        }
+         // Calculate collision && movement
+         if (horizontal != 0 || vertical != 0){
+            move(SPEED *horizontal* weatherMovement, SPEED *vertical*weatherMovement);
             previousDirectionX = horizontal;
             previousDirectionY = vertical;
             if (safeMove(screen.getMain().edges)) {
@@ -104,6 +94,9 @@ public class Player extends GameObject {
                 }
             }
         }
+
+
+
         updateHitboxPos();
         // Track distance travelled
         distance += Math.pow((Math.pow((x - oldPos.x),2f) + Math.pow((y - oldPos.y),2f)),0.5f)/10f;
@@ -120,32 +113,12 @@ public class Player extends GameObject {
                 splashTime += 1;
             }
         }
-        //If it has been 10 seconds since the player was last hit, then health will increase.
-        if (TimeUtils.timeSinceMillis(timeLastHit) > 10000){
+
+        if (TimeUtils.timeSinceMillis(timeLastHit) > 10000)
+        {
             currentHealth += 0.03;
-            //If current health goes above the max, then it will remain at max health.
             if(currentHealth > maxHealth) currentHealth = maxHealth;
             playerHealth.resize(currentHealth);
-        }
-
-        //Timing how long the GiveMoreDamage powerup lasts
-        if(TimeUtils.timeSinceMillis(damageIncreaseStart) > DAMAGE_POWERUP_TOTAL_LENGTH){
-            playerDamage = DEFUALT_DAMAGE;
-        }
-
-        //Timing how long the Immunity powerup lasts
-        if (TimeUtils.timeSinceMillis(immunityStart) > IMMUNITY_POWERUP_LENGTH){
-            immune = false;
-        }
-
-        ////Timing how long the TakeMoreDamage powerup lasts
-        if (TimeUtils.timeSinceMillis(takeMoreDamageStart) > DAMAGE_POWERUP_TOTAL_LENGTH){
-            setMaxHealth(HEALTH);
-        }
-
-        //Timing how long the Speed powerup lasts
-        if (TimeUtils.timeSinceMillis(speedStart) > SPEED_POWERUP_TOTAL_LENGTH){
-            speedMultiplier = 1;
         }
     }
 
@@ -162,6 +135,7 @@ public class Player extends GameObject {
                         edges.get((int)((y-height/2)/16)).get((int)((x-width/2)/16))
         );
     }
+
 
     /**
      * Moves the player within the x and y-axis of the game world.
@@ -184,9 +158,6 @@ public class Player extends GameObject {
     @Override
     public void takeDamage(GameScreen screen, float damage, String projectileTeam){
         timeLastHit = TimeUtils.millis();
-        if (immune == true){
-            damage = 0;
-        }
         currentHealth -= damage;
         doBloodSplash = true;
 
@@ -234,27 +205,7 @@ public class Player extends GameObject {
     public float getDistance() {
         return distance;
     }
-    public float getPlayerDamage() {
-        return playerDamage;
-    }
-    public void damageIncrease(){
-        this.playerDamage = DAMAGE_POWERUP_VALUE;
-        this.damageIncreaseStart = TimeUtils.millis();
-    }
-    public void giveMaxHealth(){
-        this.setCurrentHealth(HEALTH);
-        playerHealth.resize(currentHealth);
-    }
-    public void immunityPowerup(){
-        this.immunityStart = TimeUtils.millis();
-        immune = true;
-    }
-    public void takeMoreDamagePowerup(){
-        this.takeMoreDamageStart = TimeUtils.millis();
-        setMaxHealth(TAKE_DAMAGE_INCREASE);
-    }
-    public void speedPowerup(){
-        this.speedStart = TimeUtils.millis();
-        speedMultiplier = 2;
+    public void badWeather(){
+        weatherMovement = 1;
     }
 }

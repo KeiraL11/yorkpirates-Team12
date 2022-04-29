@@ -1,5 +1,7 @@
 package com.engteam14.yorkpirates;
 
+import javax.lang.model.util.ElementScanner6;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -7,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 
 public class YorkPirates extends Game {
 
@@ -15,6 +18,7 @@ public class YorkPirates extends Game {
 	public SpriteBatch batch;
 	public OrthographicCamera camera;
 	public Array<Array<Boolean>> edges;
+	
 
 	// Animations
 	public Animation<TextureRegion> logo;
@@ -58,9 +62,22 @@ public class YorkPirates extends Game {
 		String data = Gdx.files.internal("FINAL_MAP_Terrain.csv").readString();
 		for(String row: data.split("\n")){
 			Array<Boolean> newRow = new Array<>();
-			for(String num: row.split(",")){
-				if(num.equals("-1")) newRow.add(true);
-				else newRow.add(false);
+
+			for(String num: row.split(","))
+			{
+				if(num.equals("-1")) 
+				{				
+					newRow.add(true);
+
+				}
+				else if(num.equals("2"))
+				{
+					newRow.add(true);
+				}
+				else 
+				{
+					newRow.add(false);
+				} 	
 			}
 			edges.insert(0, newRow);
 		}

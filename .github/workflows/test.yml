@@ -38,5 +38,6 @@ jobs:
       uses: actions/upload-artifact@v3
       if: always()
       with:
-        files: "test-results/**/*.xml"
+        name: package
+        path: lwjgl3/build/libs/*.xml
       

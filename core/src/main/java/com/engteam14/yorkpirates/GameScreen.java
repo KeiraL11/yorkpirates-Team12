@@ -50,6 +50,9 @@ public class GameScreen extends ScreenAdapter {
     private final Array<Texture> langwithSprite;
     private Array<Texture> sprites;
 
+    //Weather
+    public Array<Weather> weatherArray;
+
     // Sound
     public Music music;
 
@@ -187,6 +190,23 @@ public class GameScreen extends ScreenAdapter {
         powerSprites.clear();
 
         enemies = new Array<>();
+        // Initialise weather
+        weatherArray = new Array<>();
+        Weather newWeather1;
+        Weather newWeather2;
+        Weather newWeather3;
+        sprites.add(new Texture("Ice_5_16x16.png"));
+        newWeather1 = new Weather(sprites, 1920, 1520, 5f,
+                sprites.get(0).getWidth(), sprites.get(0).getHeight(), "");
+        sprites.add(new Texture("Ice_5_16x16.png"));
+        newWeather2 = new Weather(sprites, 2080, 560, 5f,
+                sprites.get(0).getWidth(), sprites.get(0).getHeight(), "");
+        newWeather3 = new Weather(sprites, 1000, 600, 5f,
+                sprites.get(0).getWidth(), sprites.get(0).getHeight(), "");
+        weatherArray.add(newWeather1);
+        weatherArray.add(newWeather2);
+        weatherArray.add(newWeather3);
+        sprites.clear();
 
         alcuinSprite = new Array<Texture>();
         alcuinSprite.add(new Texture("alcuin_boat.png"));
@@ -288,6 +308,11 @@ public class GameScreen extends ScreenAdapter {
         // Draw Projectiles
         for(int i = 0; i < projectiles.size; i++) {
             projectiles.get(i).draw(game.batch, 0);
+        }
+
+        //Draw Weather
+        for (int i = 0; i < weatherArray.size; i++){
+            weatherArray.get(i).draw(game.batch, 0);
         }
 
         // Draw Player, Player Health and Player Name

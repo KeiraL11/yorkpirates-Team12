@@ -32,6 +32,12 @@ public class Player extends GameObject {
 
     private static String difficulty = "Normal";
 
+    public Array<String> newRow1;
+
+    private static int timeBeforeRegen = 10000;
+    private static double regenAmount = 0.03;
+    private static float enemyDamageMultiplier = 1;
+
     // Movement calculation values
     private int previousDirectionX;
     private int previousDirectionY;
@@ -45,12 +51,15 @@ public class Player extends GameObject {
     private boolean doBloodSplash = false;
 
     private float defaultDamage = 20;
+    private float weatherMovement = 1;
+
     private float playerDamage = 20;
     public long damageIncreaseStart;
     private boolean immune = false;
     public long takeMoreDamageStart;
     public long speedStart;
     public long immunityStart;
+
 
     /**
      * Generates a generic object within the game with animated frame(s) and a hit-box.
@@ -93,10 +102,16 @@ public class Player extends GameObject {
                 - ((Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) ? 1 : 0);
         int vertical = ((Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)) ? 1 : 0)
                 - ((Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)) ? 1 : 0);
-
+        //weather
+        weatherMovement = 1;
+        for(int i = 0; i<screen.weatherArray.size; i++){
+            if (this.overlaps(screen.weatherArray.get(i).hitBox)){
+                weatherMovement = 0.5f;
+            }
+        }
         // Calculate collision && movement
         if (horizontal != 0 || vertical != 0){
-            move(speedMultiplier*SPEED*horizontal, speedMultiplier*SPEED*vertical, Gdx.graphics.getDeltaTime());
+            move(speedMultiplier*weatherMovement*SPEED*horizontal, speedMultiplier*weatherMovement*SPEED*vertical, Gdx.graphics.getDeltaTime());
             previousDirectionX = horizontal;
             previousDirectionY = vertical;
             if (safeMove(screen.getMain().edges)) {
@@ -335,5 +350,9 @@ public class Player extends GameObject {
         System.out.println("Immune: " + this.immune);
         System.out.println("Current Health: " + this.currentHealth);
 
+    }
+}
+    public void badWeather(){
+        weatherMovement = 1;
     }
 }

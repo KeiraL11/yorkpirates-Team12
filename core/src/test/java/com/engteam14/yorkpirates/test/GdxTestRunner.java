@@ -1,4 +1,4 @@
-package com.engteam14.yorkpirates.tests;
+package com.engteam14.yorkpirates.test;
 
 import java.util.HashMap;
 import java.util.Map;

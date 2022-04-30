@@ -17,6 +17,7 @@ public class TitleScreen extends ScreenAdapter {
     private final YorkPirates game;
     private final GameScreen nextGame;
     private final Stage stage;
+//    private final GameScreen screen;
 
     private final TextField textBox;
     private final Cell<Image> titleCell;
@@ -29,6 +30,7 @@ public class TitleScreen extends ScreenAdapter {
      */
     public TitleScreen(YorkPirates game){
         this.game = game;
+//        this.screen = screen;
 
         // Generates main gameplay for use as background
         nextGame = new GameScreen(game);
@@ -165,13 +167,8 @@ public class TitleScreen extends ScreenAdapter {
 //        prefs.putString("PlayerName", screen.getPlayerName());
         // Get player name
         String playerName = prefs.getString("PlayerName", "Player1");
-//        if ( textBox.getText().equals("Name (optional)") || textBox.getText().equals("")) {
-//            playerName = "Player";
-//
-//        } else{
-//            playerName = textBox.getText();
-//        }
-        // Set player name and unpause game
+//        screen.getPlayer().currentHealth = prefs.getFloat("PlayerHealth", 1);
+
         nextGame.setPaused(false);
         nextGame.setPlayerName(playerName);
         game.setScreen(nextGame);

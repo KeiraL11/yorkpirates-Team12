@@ -148,6 +148,8 @@ public class PauseScreen extends ScreenAdapter {
         Preferences prefs = Gdx.app.getPreferences("My Preferences");
 
         prefs.putString("PlayerName", screen.getPlayerName());
+        prefs.putFloat("PlayerHealth", screen.getPlayer().currentHealth);
+//        prefs.putInteger("PlayerHealthTest", playerH)
 //        game.setScreen(screen);
     }
 }

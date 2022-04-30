@@ -148,10 +148,12 @@ public class Enemy extends GameObject {
     @Override
     public void draw(SpriteBatch batch, float elapsedTime){
         if(shader == null){generateShader();}
-        float rotation = 0;
+        // Rotates the boat to face the direction they are travelling.
+        float rotation = (float) Math.toDegrees(Math.atan2(yGradient, xGradient));
         batch.draw(sprite, x - width/2, y - height/2, width/2, height/2, width, height,
                 1f, 1f, rotation, 0, 0,
                 sprite.getWidth(), sprite.getHeight(), false, false);
+        // Draw the health bar.
         enemyBar.draw(batch, 0);
     }
     private void destroy(GameScreen screen){ screen.enemies.removeValue(this,true);}

@@ -90,7 +90,8 @@ public class ShopScreen extends ScreenAdapter {
             public void clicked(InputEvent event, float x, float y) {
                 if (screen.loot.Get() >= 15) {
                     give_more_damage_bought = true;
-                    screen.loot.TakeAway(15);
+                    screen.loot.Add(-15);
+                    screen.getPlayer().damageIncrease();
                 }
             }
         });
@@ -100,20 +101,21 @@ public class ShopScreen extends ScreenAdapter {
             public void clicked(InputEvent event, float x, float y) {
                 if (screen.loot.Get() >= 15) {
                     immunity_bought = true;
-                    screen.loot.TakeAway(15);
+                    screen.loot.Add(-15);
+                    screen.getPlayer().immunityPowerup();
                 }
 
             }
         });
 
-        TextButton lessDamageButton = new TextButton("Take Less Damage", skin);
+        TextButton lessDamageButton = new TextButton("Juggernaut", skin);
         lessDamageButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 if (screen.loot.Get() >= 15) {
                     take_less_damage_bought = true;
-                    screen.loot.TakeAway(15);
+                    screen.loot.Add(-15);
+                    screen.getPlayer().takeMoreDamagePowerup();
                 }
-
             }
         });
 
@@ -153,7 +155,7 @@ public class ShopScreen extends ScreenAdapter {
     @Override
     public void render(float delta){
         Gdx.input.setInputProcessor(shopStage);
-        //update();
+        update();
         ScreenUtils.clear(0.6f, 0.6f, 1.0f, 1.0f);
         loot.setText(screen.loot.GetString());
         screen.render(delta);// Draws the gameplay screen as a background
@@ -163,17 +165,17 @@ public class ShopScreen extends ScreenAdapter {
     /**
      * Is called once every frame. Used for calculations that take place before rendering.
      */
-//    private void update(){
-//        if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
-//            gameContinue();
-//        }
-//    }
-//
-//    /**
-//     * Generates a HUD object within the game that controls elements of the UI.
-//     */
-//    private void gameContinue() {
-//        screen.setPaused(false);
-//        game.setScreen(screen);
-//    }
+    private void update(){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            gameContinue();
+        }
+    }
+
+    /**
+     * Generates a HUD object within the game that controls elements of the UI.
+     */
+    private void gameContinue() {
+        screen.setPaused(false);
+        game.setScreen(screen);
+    }
 }

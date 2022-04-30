@@ -38,9 +38,7 @@ public class College extends GameObject {
      * @param team      The team the college is on.
      */
     public College(float x, float y, float width, float height, String name, String team){
-        //sprites.get(0).getWidth()*scale //height as well
         super(x, y, width, height, team);
-
         splashTime = 0;
         setMaxHealth(2000);
         setCurrentHealth(getMaxHealth());

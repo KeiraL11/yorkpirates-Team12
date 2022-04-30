@@ -15,28 +15,19 @@ public class Player extends GameObject {
     private static final int POINT_FREQUENCY = 1000; // How often the player gains points by moving.
     private static final float CAMERA_SLACK = 0.1f; // What percentage of the screen the player can move in before the camera follows.
     private static final float SPEED =70f; // Player movement speed.
-    private static final int HEALTH = 200;
+    //Related to power-ups.
     private static final int DAMAGE_POWERUP_VALUE = 500;
     private static final int DAMAGE_POWERUP_TOTAL_LENGTH = 10000;
     private static final int IMMUNITY_POWERUP_LENGTH = 10000;
     private static final int TAKE_DAMAGE_INCREASE = 350;
-    //private static final float SPEED_POWERUP_NORMAL = 1;
-    //private static final float SPEED_POWERUP_MULTIPLIER = 2;
     private static final int SPEED_POWERUP_TOTAL_LENGTH = 25000;
     private int speedMultiplier = 1;
-
     private static int timeBeforeRegen = 10000;
     private static double regenAmount = 0.03;
     private static int nonBoostedMaxHealth = 300;
     private static float enemyDamageMultiplier = 1;
 
     private static String difficulty = "Normal";
-
-    public Array<String> newRow1;
-
-    private static int timeBeforeRegen = 10000;
-    private static double regenAmount = 0.03;
-    private static float enemyDamageMultiplier = 1;
 
     // Movement calculation values
     private int previousDirectionX;
@@ -142,11 +133,11 @@ public class Player extends GameObject {
             playerHealth = null;
             screen.gameEnd(false);
         }
-
+        //All of the timers that go in the game: Power ups, blood splash, health regen.
         timerManager();
         // Camera Calculations
         ProcessCamera(screen, camera);
-        //All of the timers that go in the game: Power ups, blood splash, health regen.
+
 
     }
 
@@ -173,7 +164,8 @@ public class Player extends GameObject {
     public void move(float x, float y, float delta){
         this.x += x * delta;
         this.y += y * delta;
-        playerHealth.move(this.x, this.y + height/2 + 2f, delta); // Healthbar moves with player
+        // Healthbar moves with player
+        playerHealth.move(this.x, this.y + height/2 + 2f, delta);
     }
 
     /**
@@ -292,11 +284,6 @@ public class Player extends GameObject {
         this.speedStart = TimeUtils.millis();
         speedMultiplier = 2;
     }
-
-    public long getSpeedStart() {
-        return speedStart;
-    }
-
     public int getSpeedMultiplier(){return speedMultiplier;}
     public void setNonBoostedMaxHealth(int mh){nonBoostedMaxHealth = mh;}
 
@@ -345,14 +332,11 @@ public class Player extends GameObject {
         System.out.println("timeBeforeRegen: " + timeBeforeRegen);
         System.out.println("enemydmgmult: " + enemyDamageMultiplier);
         System.out.println("def dmg: " + defaultDamage);
+        System.out.println("current dmg" + playerDamage);
         System.out.println("maxhealth: " + maxHealth);
         System.out.println("x: " + this.x + " y: " + y);
         System.out.println("Immune: " + this.immune);
         System.out.println("Current Health: " + this.currentHealth);
 
-    }
-}
-    public void badWeather(){
-        weatherMovement = 1;
     }
 }

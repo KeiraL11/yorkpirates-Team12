@@ -137,147 +137,37 @@ public class GameScreen extends ScreenAdapter {
         TOTAL_WIDTH = MAPWIDTH * TILE_PIXEL_WIDTH;
         TOTAL_HEIGHT = MAPHEIGHT * TILE_PIXEL_HEIGHT;
 
-        //PowerUps
+        // Create all the object arrays (makes them iterable: can use for loops.)
         powerups = new Array<>();
-        PowerUps newPower;
-        Array<Texture> powerSprites = new Array<>();
-
-        //Add Give More Damage PowerUp
-        powerSprites.add(new Texture("give_more_damage.png"));
-        powerSprites.add(new Texture("give_more_damage_grey.png"));
-        newPower = new PowerUps(1000f, 1500,
-                powerSprites.get(0).getWidth()*0.05f, powerSprites.get(0).getHeight()*0.05f,
-                "GiveMoreDamage");
-        newPower.changeImage(powerSprites);
-        //newPower.addPower(-70, -20, 60); Think this was to add separately - do not want this.
-        powerups.add(newPower);
-        powerSprites.clear();
-
-        //Add Take More Damage PowerUp
-        powerSprites.add(new Texture("take_more_damage_grey.png"));
-        newPower = new PowerUps(3000, 3000,
-                powerSprites.get(0).getWidth()*0.05f, powerSprites.get(0).getHeight()*0.05f,
-                "TakeMoreDamage");
-        newPower.changeImage(powerSprites);
-        powerups.add(newPower);
-        powerSprites.clear();
-
-        //Add Immunity
-        powerSprites.add(new Texture("immunity_grey.png"));
-        newPower = new PowerUps(1500f, 2000f,
-                powerSprites.get(0).getWidth()*0.05f, powerSprites.get(0).getHeight()*0.05f,
-                "Immunity");
-        newPower.changeImage(powerSprites);
-        powerups.add(newPower);
-        powerSprites.clear();
-
-        //Add Health Restore
-        powerSprites.add(new Texture("health_restore.png"));
-        newPower = new PowerUps(1000, 725,
-                powerSprites.get(0).getWidth()*0.05f, powerSprites.get(0).getHeight()*0.05f,
-                "HealthRestore");
-        newPower.changeImage(powerSprites);
-        powerups.add(newPower);
-        powerSprites.clear();
-
-         //Add Speed
-        powerSprites.add(new Texture("speed_grey.png"));
-        newPower = new PowerUps(2200, 800,
-                powerSprites.get(0).getWidth()*0.05f, powerSprites.get(0).getHeight()*0.05f,
-                "Speed");
-        newPower.changeImage(powerSprites);
-        powerups.add(newPower);
-        powerSprites.clear();
-
         enemies = new Array<>();
-        // Initialise weather
         weatherArray = new Array<>();
-        Weather newWeather1;
-        Weather newWeather2;
-        Weather newWeather3;
-        sprites.add(new Texture("Ice_5_16x16.png"));
-        newWeather1 = new Weather(sprites, 1920, 1520, 5f,
-                sprites.get(0).getWidth(), sprites.get(0).getHeight(), "");
-        sprites.add(new Texture("Ice_5_16x16.png"));
-        newWeather2 = new Weather(sprites, 2080, 560, 5f,
-                sprites.get(0).getWidth(), sprites.get(0).getHeight(), "");
-        newWeather3 = new Weather(sprites, 1000, 600, 5f,
-                sprites.get(0).getWidth(), sprites.get(0).getHeight(), "");
-        weatherArray.add(newWeather1);
-        weatherArray.add(newWeather2);
-        weatherArray.add(newWeather3);
-        sprites.clear();
-
-        alcuinSprite = new Array<Texture>();
+        colleges = new Array<>();
+        projectiles = new Array<>();
+        // Texture for enemy boats.
+        alcuinSprite = new Array<>();
         alcuinSprite.add(new Texture("alcuin_boat.png"));
-        derwentSprite = new Array<Texture>();
+        derwentSprite = new Array<>();
         derwentSprite.add(new Texture("derwent_boat.png"));
-        langwithSprite = new Array<Texture>();
+        langwithSprite = new Array<>();
         langwithSprite.add(new Texture("langwith_boat.png"));
 
-        Enemy newEnemy = new Enemy(1000, 725,
-                32, 16,
-                enemyTeam);
-        newEnemy.changeImage(alcuinSprite);
-        enemies.add(newEnemy);
+        // Initialise powerups
+        createPowerUps();
+        // Initialise weather
+        createWeather();
+
+
+//        Enemy newEnemy = new Enemy(1000, 725,
+//                32, 16,
+//                enemyTeam);
+//        newEnemy.changeImage(alcuinSprite);
+//        enemies.add(newEnemy);
+
         // Initialise colleges
-
         College.capturedCount = 0;
-        colleges = new Array<>();
-        College newCollege;
-        Array<Texture> collegeSprites = new Array<>();
-
-        // Add alcuin
-        collegeSprites.add( new Texture("alcuin.png"),
-                            new Texture("alcuin_2.png"));
-        newCollege = new College(1492, 665,
-                collegeSprites.get(0).getWidth()*0.5f,collegeSprites.get(0).getWidth()*0.5f,
-                "Alcuin", enemyTeam);
-        newCollege.imageHandling(collegeSprites, "alcuin_boat.png", player);
-        newCollege.addBoat(30, -20, -60);
-        newCollege.addBoat(-50, -40, -150);
-        newCollege.addBoat(-40, -70, 0);
-        colleges.add(newCollege);
-        collegeSprites.clear();
-
-        // Add derwent
-        collegeSprites.add( new Texture("derwent.png"),
-                            new Texture("derwent_2.png"));
-        newCollege = new College(1815, 2105,
-                collegeSprites.get(0).getWidth()*0.8f, collegeSprites.get(0).getHeight()*0.08f,
-                "Derwent", enemyTeam);
-        newCollege.imageHandling(collegeSprites, "derwent_boat.png", player);
-        newCollege.addBoat(-70, -20, 60);
-        newCollege.addBoat(-70, -60, 70);
-        colleges.add(newCollege);
-        collegeSprites.clear();
-
-        // Add langwith
-        collegeSprites.add( new Texture("langwith.png"),
-                            new Texture("langwith_2.png"));
-        newCollege = new College(1300, 1530,
-                collegeSprites.get(0).getWidth()*1.0f, collegeSprites.get(0).getHeight()*1.0f,
-                "Langwith", enemyTeam);
-        newCollege.imageHandling(collegeSprites, "langwith_boat.png", player);
-        newCollege.addBoat(-150, -50, 60);
-        newCollege.addBoat(-120, -10, -60);
-        newCollege.addBoat(-10, -40, 230);
-        newCollege.addBoat(140, 10, 300);
-        newCollege.addBoat(200, 35, 135);
-        colleges.add(newCollege);
-        collegeSprites.clear();
-
-        // Add goodricke
-        collegeSprites.add( new Texture("goodricke.png"));
-        newCollege = new College(700, 525,
-                collegeSprites.get(0).getWidth()*0.7f, collegeSprites.get(0).getHeight()*0.7f,
-                "Home",playerTeam);
-        newCollege.imageHandling(collegeSprites, "ship1.png", player);
-        colleges.add(newCollege);
-        collegeSprites.clear();
+        createColleges();
 
         // Initialise projectiles array to be used storing live projectiles
-        projectiles = new Array<>();
         sprites.add(new Texture("tempProjectile.png"));
     }
 
@@ -456,7 +346,129 @@ public class GameScreen extends ScreenAdapter {
         //Add the enemy to the array of enemies.
         enemies.add(newEnemy);
     }
+    private void createPowerUps() throws Exception {
+        //PowerUps
+        PowerUps newPower;
+        Array<Texture> powerSprites = new Array<>();
 
+        //Add Give More Damage PowerUp
+        powerSprites.add(new Texture("give_more_damage.png"));
+        powerSprites.add(new Texture("give_more_damage_grey.png"));
+        newPower = new PowerUps(1000f, 1500,
+                powerSprites.get(0).getWidth()*0.05f, powerSprites.get(0).getHeight()*0.05f,
+                "GiveMoreDamage");
+        newPower.changeImage(powerSprites);
+        //newPower.addPower(-70, -20, 60); Think this was to add separately - do not want this.
+        powerups.add(newPower);
+        powerSprites.clear();
+
+        //Add Take More Damage PowerUp
+        powerSprites.add(new Texture("take_more_damage_grey.png"));
+        newPower = new PowerUps(3000, 3000,
+                powerSprites.get(0).getWidth()*0.05f, powerSprites.get(0).getHeight()*0.05f,
+                "TakeMoreDamage");
+        newPower.changeImage(powerSprites);
+        powerups.add(newPower);
+        powerSprites.clear();
+
+        //Add Immunity
+        powerSprites.add(new Texture("immunity_grey.png"));
+        newPower = new PowerUps(1500f, 2000f,
+                powerSprites.get(0).getWidth()*0.05f, powerSprites.get(0).getHeight()*0.05f,
+                "Immunity");
+        newPower.changeImage(powerSprites);
+        powerups.add(newPower);
+        powerSprites.clear();
+
+        //Add Health Restore
+        powerSprites.add(new Texture("health_restore.png"));
+        newPower = new PowerUps(1000, 725,
+                powerSprites.get(0).getWidth()*0.05f, powerSprites.get(0).getHeight()*0.05f,
+                "HealthRestore");
+        newPower.changeImage(powerSprites);
+        powerups.add(newPower);
+        powerSprites.clear();
+
+        //Add Speed
+        powerSprites.add(new Texture("speed_grey.png"));
+        newPower = new PowerUps(2200, 800,
+                powerSprites.get(0).getWidth()*0.05f, powerSprites.get(0).getHeight()*0.05f,
+                "Speed");
+        newPower.changeImage(powerSprites);
+        powerups.add(newPower);
+        powerSprites.clear();
+    }
+    private void createWeather() throws Exception {
+        // Initialise weather
+        Weather newWeather;
+        sprites.add(new Texture("Ice_5_16x16.png"));
+        newWeather = new Weather( 1920, 1520, 5f,
+                sprites.get(0).getWidth() * 5f, sprites.get(0).getHeight() * 5f, "");
+        newWeather.changeImage(sprites);
+        weatherArray.add(newWeather);
+        newWeather = new Weather(2080, 560, 5f,
+                sprites.get(0).getWidth() * 5f, sprites.get(0).getHeight() * 5f, "");
+        newWeather.changeImage(sprites);
+        weatherArray.add(newWeather);
+        newWeather = new Weather(1000, 600, 5f,
+                sprites.get(0).getWidth() * 5f, sprites.get(0).getHeight() * 5f, "");
+        newWeather.changeImage(sprites);
+        weatherArray.add(newWeather);
+        sprites.clear();
+    }
+    private void createColleges() throws Exception{
+        College newCollege;
+        Array<Texture> collegeSprites = new Array<>();
+
+        // Add alcuin
+        collegeSprites.add( new Texture("alcuin.png"),
+                new Texture("alcuin_2.png"));
+        newCollege = new College(1492, 665,
+                collegeSprites.get(0).getWidth()*0.5f,collegeSprites.get(0).getWidth()*0.5f,
+                "Alcuin", enemyTeam);
+        newCollege.imageHandling(collegeSprites, "alcuin_boat.png", player);
+        newCollege.addBoat(30, -20, -60);
+        newCollege.addBoat(-50, -40, -150);
+        newCollege.addBoat(-40, -70, 0);
+        colleges.add(newCollege);
+        collegeSprites.clear();
+
+        // Add derwent
+        collegeSprites.add( new Texture("derwent.png"),
+                new Texture("derwent_2.png"));
+        newCollege = new College(1815, 2105,
+                collegeSprites.get(0).getWidth()*0.8f, collegeSprites.get(0).getHeight()*0.8f,
+                "Derwent", enemyTeam);
+        newCollege.imageHandling(collegeSprites, "derwent_boat.png", player);
+        newCollege.addBoat(-70, -20, 60);
+        newCollege.addBoat(-70, -60, 70);
+        colleges.add(newCollege);
+        collegeSprites.clear();
+
+        // Add langwith
+        collegeSprites.add( new Texture("langwith.png"),
+                new Texture("langwith_2.png"));
+        newCollege = new College(1300, 1530,
+                collegeSprites.get(0).getWidth()*1.0f, collegeSprites.get(0).getHeight()*1.0f,
+                "Langwith", enemyTeam);
+        newCollege.imageHandling(collegeSprites, "langwith_boat.png", player);
+        newCollege.addBoat(-150, -50, 60);
+        newCollege.addBoat(-120, -10, -60);
+        newCollege.addBoat(-10, -40, 230);
+        newCollege.addBoat(140, 10, 300);
+        newCollege.addBoat(200, 35, 135);
+        colleges.add(newCollege);
+        collegeSprites.clear();
+
+        // Add goodricke
+        collegeSprites.add( new Texture("goodricke.png"));
+        newCollege = new College(700, 525,
+                collegeSprites.get(0).getWidth()*0.7f, collegeSprites.get(0).getHeight()*0.7f,
+                "Home",playerTeam);
+        newCollege.imageHandling(collegeSprites, "ship1.png", player);
+        colleges.add(newCollege);
+        collegeSprites.clear();
+    }
     /**
      * Called to switch from the current screen to the pause screen, while retaining the current screen's information.
      */

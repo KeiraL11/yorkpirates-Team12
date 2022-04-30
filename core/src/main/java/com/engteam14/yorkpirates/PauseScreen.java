@@ -52,6 +52,14 @@ public class PauseScreen extends ScreenAdapter {
             }
         });
 
+        TextButton save = new TextButton("Save", skin);
+        resume.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                gameSave() ;
+            }
+        });
+
+
         TextButton restart = new TextButton("End Game", skin);
         restart.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -92,6 +100,8 @@ public class PauseScreen extends ScreenAdapter {
         table.row();
         table.add(resume).expand();
         table.row();
+        table.add(save).expand();
+        table.row();
         table.add(restart).expand();
         table.row();
         table.add(music).expand();
@@ -129,6 +139,11 @@ public class PauseScreen extends ScreenAdapter {
      */
     private void gameContinue() {
         screen.setPaused(false);
+        game.setScreen(screen);
+    }
+
+    private void gameSave() {
+        screen.setPaused(true);
         game.setScreen(screen);
     }
 }

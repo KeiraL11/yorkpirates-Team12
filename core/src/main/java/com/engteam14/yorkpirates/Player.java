@@ -29,6 +29,8 @@ public class Player extends GameObject {
     private static final int SPEED_POWERUP_TOTAL_LENGTH = 25000;
     private int speedMultiplier = 1;
 
+    public Array<String> newRow1;
+
     private static int timeBeforeRegen = 10000;
     private static double regenAmount = 0.03;
     private static float enemyDamageMultiplier = 1;
@@ -43,6 +45,8 @@ public class Player extends GameObject {
     private float splashTime;
     private long timeLastHit;
     private boolean doBloodSplash = false;
+
+    private float weatherMovement = 1;
 
     private float playerDamage = 20;
     private long damageIncreaseStart;
@@ -89,10 +93,17 @@ public class Player extends GameObject {
                 - ((Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) ? 1 : 0);
         int vertical = ((Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)) ? 1 : 0)
                 - ((Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)) ? 1 : 0);
-
+        //weather
+        weatherMovement = 1;
+        for(int i = 0; i<screen.weatherArray.size; i++){
+            if (this.overlaps(screen.weatherArray.get(i).hitBox)){
+                //weatherArray.get(i).effect();
+                weatherMovement = 0.5f;
+            }
+        }
         // Calculate collision && movement
         if (horizontal != 0 || vertical != 0){
-            move(speedMultiplier*SPEED*horizontal, speedMultiplier*SPEED*vertical);
+            move(speedMultiplier*weatherMovement*SPEED*horizontal, speedMultiplier*weatherMovement*SPEED*vertical);
             previousDirectionX = horizontal;
             previousDirectionY = vertical;
             if (safeMove(screen.getMain().edges)) {
@@ -196,6 +207,7 @@ public class Player extends GameObject {
         if (immune == true){
             damage = 0;
         }
+        timeLastHit = TimeUtils.millis();
         currentHealth -= damage;
         doBloodSplash = true;
 
@@ -300,5 +312,8 @@ public class Player extends GameObject {
         System.out.println("maxhealth: " + maxHealth);
         System.out.println("x: " + this.x + " y: " + y);
 
+    }
+    public void badWeather(){
+        weatherMovement = 1;
     }
 }

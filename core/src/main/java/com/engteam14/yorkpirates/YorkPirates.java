@@ -24,7 +24,7 @@ public class YorkPirates extends Game {
 
 	// Constants
 	public static final boolean DEBUG_ON = false; // Determines if the game runs in DEBUG mode.
-	private static final int SCREEN_TO_PIXEL_RATIO = 100; // Determines the pixel ratio of the game.
+	private static final int SCREEN_TO_PIXEL_RATIO = 16; // Determines the pixel ratio of the game.
 
 	/**
 	 * Initialises base game class.
@@ -58,9 +58,18 @@ public class YorkPirates extends Game {
 		String data = Gdx.files.internal("FINAL_MAP_Terrain.csv").readString();
 		for(String row: data.split("\n")){
 			Array<Boolean> newRow = new Array<>();
-			for(String num: row.split(",")){
-				if(num.equals("-1")) newRow.add(true);
-				else newRow.add(false);
+			for(String num: row.split(",")) {
+				if(num.equals("-1")) {
+					newRow.add(true);
+				}
+				else if(num.equals("2"))
+				{
+					newRow.add(true);
+				}
+				else
+				{
+					newRow.add(false);
+				}
 			}
 			edges.insert(0, newRow);
 		}

@@ -26,7 +26,7 @@ public class TitleScreen extends ScreenAdapter {
      * Initialises the title screen, as well as relevant textures and data it may contain.
      * @param game  Passes in the base game class for reference.
      */
-    public TitleScreen(YorkPirates game){
+    public TitleScreen(YorkPirates game) throws Exception {
         this.game = game;
 
         // Generates main gameplay for use as background
@@ -167,17 +167,14 @@ public class TitleScreen extends ScreenAdapter {
         game.setScreen(nextGame);
     }
     private void setEasy(){
-        System.out.println("Easy");
         nextGame.setEasy();
         gameStart();
     }
     private void setNormal(){
-        System.out.println("Normal");
         nextGame.setNormal();
         gameStart();
     }
     private void setHard(){
-        System.out.println("Hard");
         nextGame.setHard();
         gameStart();
     }

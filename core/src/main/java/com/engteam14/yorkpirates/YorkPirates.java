@@ -66,7 +66,11 @@ public class YorkPirates extends Game {
 		}
 
 		// Sets the screen to the title screen
-		setScreen(new TitleScreen(this));
+		try {
+			setScreen(new TitleScreen(this));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**

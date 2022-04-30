@@ -7,19 +7,32 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+
+import java.sql.Time;
 
 public class GameScreen extends ScreenAdapter {
     // Team name constants
     public static final String playerTeam = "PLAYER";
     public static final String enemyTeam = "ENEMY";
+
+    //Map properties
+    public static int MAPWIDTH;
+    public static int MAPHEIGHT;
+    public static int TILE_PIXEL_WIDTH;
+    public static int TILE_PIXEL_HEIGHT;
+    public static int TOTAL_WIDTH;
+    public static int TOTAL_HEIGHT;
 
     // Score managers
     public ScoreManager points;
@@ -28,9 +41,14 @@ public class GameScreen extends ScreenAdapter {
     //PowerUps
     public Array<PowerUps> powerups;
 
-    // Colleges
+    // Arrays (for loops)
     public Array<College> colleges;
     public Array<Projectile> projectiles;
+    public Array<Enemy> enemies;
+    private final Array<Texture> alcuinSprite;
+    private final Array<Texture> derwentSprite;
+    private final Array<Texture> langwithSprite;
+    private Array<Texture> sprites;
 
     // Sound
     public Music music;
@@ -44,6 +62,16 @@ public class GameScreen extends ScreenAdapter {
     private Vector3 followPos;
     private boolean followPlayer = false;
 
+    private Projectile newProjectile;
+
+    private static int totalEnemiesAllowed = 5;
+    private static int enemySpawnFreqency = 1000;
+    private static long timeLastEnemySpawned;
+    private static int ambushRate = 15000;
+    private long timeLastAmbushChance;
+    private static float ambush_chance = 0;
+    private static int ambushSize = 4;
+    private static boolean ambush = false;
     // UI & Camera
     private final HUD gameHUD;
     private final SpriteBatch HUDBatch;
@@ -63,7 +91,7 @@ public class GameScreen extends ScreenAdapter {
      * Initialises the main game screen, as well as relevant entities and data.
      * @param game  Passes in the base game class for reference.
      */
-    public GameScreen(YorkPirates game){
+    public GameScreen(YorkPirates game) throws Exception {
         this.game = game;
         playerName = "Player";
 
@@ -85,11 +113,12 @@ public class GameScreen extends ScreenAdapter {
         music.play();
 
         // Initialise sprites array to be used generating GameObjects
-        Array<Texture> sprites = new Array<>();
+        sprites = new Array<>();
 
         // Initialise player
         sprites.add(new Texture("ship1.png"), new Texture("ship2.png"), new Texture("ship3.png"));
-        player = new Player(sprites, 2, 821, 489, 32, 16, playerTeam);
+        player = new Player(821, 489, 32, 16, playerTeam);
+        player.changeImage(sprites);
         sprites.clear();
         followPos = new Vector3(player.x, player.y, 0f);
         game.camera.position.lerp(new Vector3(760, 510, 0f), 1f);
@@ -97,6 +126,13 @@ public class GameScreen extends ScreenAdapter {
         // Initialise tilemap
         tiledMap = new TmxMapLoader().load("FINAL_MAP.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        MapProperties prop  = tiledMap.getProperties();
+        MAPWIDTH = prop.get("width", Integer.class);
+        MAPHEIGHT = prop.get("height", Integer.class);
+        TILE_PIXEL_WIDTH = prop.get("tilewidth", Integer.class);
+        TILE_PIXEL_HEIGHT = prop.get("tileheight", Integer.class);
+        TOTAL_WIDTH = MAPWIDTH * TILE_PIXEL_WIDTH;
+        TOTAL_HEIGHT = MAPHEIGHT * TILE_PIXEL_HEIGHT;
 
         //PowerUps
         powerups = new Array<>();
@@ -106,37 +142,66 @@ public class GameScreen extends ScreenAdapter {
         //Add Give More Damage PowerUp
         powerSprites.add(new Texture("give_more_damage.png"));
         powerSprites.add(new Texture("give_more_damage_grey.png"));
-        newPower = new PowerUps(powerSprites, 1000f, 1000f, 1500, "GiveMoreDamage");
+        newPower = new PowerUps(1000f, 1500,
+                powerSprites.get(0).getWidth()*0.05f, powerSprites.get(0).getHeight()*0.05f,
+                "GiveMoreDamage");
+        newPower.changeImage(powerSprites);
         //newPower.addPower(-70, -20, 60); Think this was to add separately - do not want this.
         powerups.add(newPower);
         powerSprites.clear();
 
         //Add Take More Damage PowerUp
         powerSprites.add(new Texture("take_more_damage_grey.png"));
-        newPower = new PowerUps(powerSprites, 1000f, 3000, 3000, "TakeMoreDamage");
+        newPower = new PowerUps(3000, 3000,
+                powerSprites.get(0).getWidth()*0.05f, powerSprites.get(0).getHeight()*0.05f,
+                "TakeMoreDamage");
+        newPower.changeImage(powerSprites);
         powerups.add(newPower);
         powerSprites.clear();
 
         //Add Immunity
         powerSprites.add(new Texture("immunity_grey.png"));
-        newPower = new PowerUps(powerSprites, 100f, 1500f, 2000f, "Immunity");
+        newPower = new PowerUps(1500f, 2000f,
+                powerSprites.get(0).getWidth()*0.05f, powerSprites.get(0).getHeight()*0.05f,
+                "Immunity");
+        newPower.changeImage(powerSprites);
         powerups.add(newPower);
         powerSprites.clear();
-//
+
         //Add Health Restore
         powerSprites.add(new Texture("health_restore.png"));
-        newPower = new PowerUps(powerSprites, 1f,1000, 725, "HealthRestore");
+        newPower = new PowerUps(1000, 725,
+                powerSprites.get(0).getWidth()*0.05f, powerSprites.get(0).getHeight()*0.05f,
+                "HealthRestore");
+        newPower.changeImage(powerSprites);
         powerups.add(newPower);
         powerSprites.clear();
-//
+
          //Add Speed
         powerSprites.add(new Texture("speed_grey.png"));
-        newPower = new PowerUps(powerSprites, 100f, 2200, 800, "Speed");
+        newPower = new PowerUps(2200, 800,
+                powerSprites.get(0).getWidth()*0.05f, powerSprites.get(0).getHeight()*0.05f,
+                "Speed");
+        newPower.changeImage(powerSprites);
         powerups.add(newPower);
         powerSprites.clear();
 
+        enemies = new Array<>();
 
+        alcuinSprite = new Array<Texture>();
+        alcuinSprite.add(new Texture("alcuin_boat.png"));
+        derwentSprite = new Array<Texture>();
+        derwentSprite.add(new Texture("derwent_boat.png"));
+        langwithSprite = new Array<Texture>();
+        langwithSprite.add(new Texture("langwith_boat.png"));
+
+        Enemy newEnemy = new Enemy(1000, 725,
+                32, 16,
+                enemyTeam);
+        newEnemy.changeImage(alcuinSprite);
+        enemies.add(newEnemy);
         // Initialise colleges
+
         College.capturedCount = 0;
         colleges = new Array<>();
         College newCollege;
@@ -145,7 +210,10 @@ public class GameScreen extends ScreenAdapter {
         // Add alcuin
         collegeSprites.add( new Texture("alcuin.png"),
                             new Texture("alcuin_2.png"));
-        newCollege = new College(collegeSprites, 1492, 665, 0.5f,"Alcuin", enemyTeam, player, "alcuin_boat.png");
+        newCollege = new College(1492, 665,
+                collegeSprites.get(0).getWidth()*0.5f,collegeSprites.get(0).getWidth()*0.5f,
+                "Alcuin", enemyTeam);
+        newCollege.imageHandling(collegeSprites, "alcuin_boat.png", player);
         newCollege.addBoat(30, -20, -60);
         newCollege.addBoat(-50, -40, -150);
         newCollege.addBoat(-40, -70, 0);
@@ -155,7 +223,10 @@ public class GameScreen extends ScreenAdapter {
         // Add derwent
         collegeSprites.add( new Texture("derwent.png"),
                             new Texture("derwent_2.png"));
-        newCollege = (new College(collegeSprites, 1815, 2105, 0.8f,"Derwent", enemyTeam, player, "derwent_boat.png"));
+        newCollege = new College(1815, 2105,
+                collegeSprites.get(0).getWidth()*0.8f, collegeSprites.get(0).getHeight()*0.08f,
+                "Derwent", enemyTeam);
+        newCollege.imageHandling(collegeSprites, "derwent_boat.png", player);
         newCollege.addBoat(-70, -20, 60);
         newCollege.addBoat(-70, -60, 70);
         colleges.add(newCollege);
@@ -164,7 +235,10 @@ public class GameScreen extends ScreenAdapter {
         // Add langwith
         collegeSprites.add( new Texture("langwith.png"),
                             new Texture("langwith_2.png"));
-        newCollege = (new College(collegeSprites, 1300, 1530, 1.0f,"Langwith", enemyTeam, player, "langwith_boat.png"));
+        newCollege = new College(1300, 1530,
+                collegeSprites.get(0).getWidth()*1.0f, collegeSprites.get(0).getHeight()*1.0f,
+                "Langwith", enemyTeam);
+        newCollege.imageHandling(collegeSprites, "langwith_boat.png", player);
         newCollege.addBoat(-150, -50, 60);
         newCollege.addBoat(-120, -10, -60);
         newCollege.addBoat(-10, -40, 230);
@@ -175,10 +249,16 @@ public class GameScreen extends ScreenAdapter {
 
         // Add goodricke
         collegeSprites.add( new Texture("goodricke.png"));
-        colleges.add(new College(collegeSprites, 700, 525, 0.7f,"Home",playerTeam,player, "ship1.png"));
+        newCollege = new College(700, 525,
+                collegeSprites.get(0).getWidth()*0.7f, collegeSprites.get(0).getHeight()*0.7f,
+                "Home",playerTeam);
+        newCollege.imageHandling(collegeSprites, "ship1.png", player);
+        colleges.add(newCollege);
+        collegeSprites.clear();
 
         // Initialise projectiles array to be used storing live projectiles
         projectiles = new Array<>();
+        sprites.add(new Texture("tempProjectile.png"));
     }
 
     /**
@@ -190,7 +270,11 @@ public class GameScreen extends ScreenAdapter {
         // Only update if not paused
         if(!isPaused) {
             elapsedTime += delta;
-            update();
+            try {
+                update();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         game.camera.update();
         game.batch.setProjectionMatrix(game.camera.combined);
@@ -226,6 +310,10 @@ public class GameScreen extends ScreenAdapter {
             powerups.get(i).draw(game.batch, 0);
         }
 
+        for(int i = 0; i < enemies.size; i++){
+            enemies.get(i).draw(game.batch, 0);
+        }
+
         game.batch.end();
 
         // Draw HUD
@@ -240,7 +328,7 @@ public class GameScreen extends ScreenAdapter {
     /**
      * Is called once every frame. Used for game calculations that take place before rendering.
      */
-    private void update(){
+    private void update() throws Exception {
         // Call updates for all relevant objects
         player.update(this, game.camera);
         for(int i = 0; i < colleges.size; i++) {
@@ -249,14 +337,49 @@ public class GameScreen extends ScreenAdapter {
         for(int i = 0; i < powerups.size; i++){
             powerups.get(i).update(this);
         }
+        for (int i = 0; i< enemies.size; i++){
+            enemies.get(i).update(this);
+        }
+
+        // Enemy spawning code
+        // Spawn an enemy every couple seconds, in a random location.
+        // Number of "non-ambush" enemies shouldn't exceed "totalEnemiesAllowed"
+        if (TimeUtils.timeSinceMillis(timeLastEnemySpawned) > enemySpawnFreqency &&
+                enemies.size < totalEnemiesAllowed){
+            timeLastEnemySpawned = TimeUtils.millis();
+            //This allows for spawning anywhere on the screen.
+            spawnEnemies(0, TOTAL_WIDTH,0, TOTAL_HEIGHT);
+        }
+        // Chance for the player to get ambushed, this is where enemy boats
+        // can spawn as a group close to the player
+        //      added note: don't ambush the player in the first 20 seconds of the game starting.
+        if(ambush && getElapsedTime() > 20) {
+            // The total number of enemy boats possible would be ambush size + totalEnemiesAllowed,
+            // the "+ 1" just added so that ambushes could happen, even if all the other enemies are
+            // stuck behind a rock or something.
+            if (TimeUtils.timeSinceMillis(timeLastAmbushChance) > ambushRate &&
+                    enemies.size < totalEnemiesAllowed + 1) {
+                timeLastAmbushChance = TimeUtils.millis();
+                if(MathUtils.random() < ambush_chance) {
+                    // "-1" just to make the ambushSize reflect true number of enemies in an ambush.
+                    for (int i = 0; i < ambushSize - 1; i++) {
+                        // Spawn the enemy boats around the player
+                        // range*2 square spawning location.
+                        int range = 350;
+                        spawnEnemies((int) (player.x - range), (int) player.x + range,
+                                (int) player.y - range, (int) player.y + range);
+                    }
+                }
+            }
+        }
         // Check for projectile creation, then call projectile update
         if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
             Vector3 mouseVector = new Vector3(Gdx.input.getX(), Gdx.input.getY(),0);
             Vector3 mousePos = game.camera.unproject(mouseVector);
 
-            Array<Texture> sprites = new Array<>();
-            sprites.add(new Texture("tempProjectile.png"));
-            projectiles.add(new Projectile(sprites, 0, player, mousePos.x, mousePos.y, playerTeam));
+            newProjectile = new Projectile(player, mousePos.x, mousePos.y, playerTeam);
+            newProjectile.changeImage(sprites);
+            projectiles.add(newProjectile);
             gameHUD.endTutorial();
         } for(int i = projectiles.size - 1; i >= 0; i--) {
             projectiles.get(i).update(this);
@@ -274,7 +397,39 @@ public class GameScreen extends ScreenAdapter {
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.H)){
             player.printStats();
+            printElaspedTime();
         }
+    }
+
+    /**
+     * Allows for the spawning of enemies in a random location, bound by the parameters.
+     * Enemies will have a random image chosen, then be added to the "enemies" array.
+     *
+     * @param lowerXbound The lower bound of the x coordinate that the enemy can spawn.
+     * @param upperXbound The upper bound of the x coordinate that the enemy can spawn.
+     * @param lowerYbound The lower bound of the y coordinate that the enemy can spawn.
+     * @param upperYbound The upper bound of the y coordinate that the enemy can spawn.
+     * @throws Exception will throw exception because of the "changeImage" method.
+     */
+    private void spawnEnemies(int lowerXbound, int upperXbound,
+                              int lowerYbound, int upperYbound) throws Exception {
+        Enemy newEnemy = new Enemy(1000, 725,
+                32, 16,
+                enemyTeam);
+        // Enemy will spawn in a random location within the boundaries set by the parameters.
+        newEnemy.changeSpawn(this, lowerXbound, upperXbound, lowerYbound, upperYbound);
+
+        //Pick an image to draw the enemy
+        int imagePicker = MathUtils.random(0,2);
+        if (imagePicker == 0) {
+            newEnemy.changeImage(alcuinSprite);
+        } else if (imagePicker == 1){
+            newEnemy.changeImage(derwentSprite);
+        } else{
+            newEnemy.changeImage(langwithSprite);
+        }
+        //Add the enemy to the array of enemies.
+        enemies.add(newEnemy);
     }
 
     /**
@@ -296,7 +451,7 @@ public class GameScreen extends ScreenAdapter {
     /**
      * Called to switch from the current screen to the title screen.
      */
-    public void gameReset(){
+    public void gameReset() throws Exception {
         game.setScreen(new TitleScreen(game));
     }
 
@@ -332,9 +487,36 @@ public class GameScreen extends ScreenAdapter {
      * @return  The player.
      */
     public Player getPlayer() { return player; }
-    public void setEasy(){player.setEasy();}
-    public void setNormal(){player.setNormal();}
-    public void setHard(){player.setHard();}
+    // Setting the difficulty of the game
+    // The player method will change properties around the player
+    // the rest will change the different enemy spawning properties.
+    public void setEasy(){
+        player.setEasy();
+        enemySpawnFreqency = 15000;
+        totalEnemiesAllowed = 5;
+        ambushRate = 999999999;
+        ambush_chance = 0;
+        ambush = false;
+        ambushSize = 0;
+    }
+    public void setNormal(){
+        player.setNormal();
+        enemySpawnFreqency = 10000;
+        totalEnemiesAllowed = 10;
+        ambushRate = 25000;
+        ambush_chance = 0.1f;
+        ambush = true;
+        ambushSize = 3;
+    }
+    public void setHard(){
+        player.setHard();
+        enemySpawnFreqency = 5000;
+        ambushRate = 20000;
+        totalEnemiesAllowed = 11;
+        ambush_chance = 0.25f;
+        ambush = true;
+        ambushSize = 4;
+    }
 
 
     /**
@@ -378,5 +560,8 @@ public class GameScreen extends ScreenAdapter {
         HUDBatch.dispose();
         tiledMap.dispose();
         music.dispose();
+    }
+    public void printElaspedTime(){
+        System.out.println("Elasped Time: " + getElapsedTime());
     }
 }

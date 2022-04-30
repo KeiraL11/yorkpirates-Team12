@@ -16,7 +16,7 @@ public class Player extends GameObject {
     private static final float CAMERA_SLACK = 0.1f; // What percentage of the screen the player can move in before the camera follows.
     private static final float SPEED =70f; // Player movement speed.
     private static final int HEALTH = 200;
-    private static final int DAMAGE_POWERUP_VALUE = 1000;
+    private static final int DAMAGE_POWERUP_VALUE = 500;
     private static final int DAMAGE_POWERUP_TOTAL_LENGTH = 10000;
     private static final int IMMUNITY_POWERUP_LENGTH = 10000;
     private static final int TAKE_DAMAGE_INCREASE = 350;
@@ -27,7 +27,10 @@ public class Player extends GameObject {
 
     private static int timeBeforeRegen = 10000;
     private static double regenAmount = 0.03;
+    private static int nonBoostedMaxHealth = 300;
     private static float enemyDamageMultiplier = 1;
+
+    private static String difficulty = "Normal";
 
     // Movement calculation values
     private int previousDirectionX;
@@ -36,40 +39,47 @@ public class Player extends GameObject {
     private long lastMovementScore;
 
     private HealthBar playerHealth;
+    public long currentTime;
     private float splashTime;
     private long timeLastHit;
     private boolean doBloodSplash = false;
 
     private float defaultDamage = 20;
     private float playerDamage = 20;
-    private long damageIncreaseStart;
+    public long damageIncreaseStart;
     private boolean immune = false;
-    private long takeMoreDamageStart;
-    private long speedStart;
-    private long immunityStart;
+    public long takeMoreDamageStart;
+    public long speedStart;
+    public long immunityStart;
 
     /**
      * Generates a generic object within the game with animated frame(s) and a hit-box.
-     * @param frames    The animation frames, or a single sprite.
-     * @param fps       The number of frames to be displayed per second.
      * @param x         The x coordinate within the map to initialise the object at.
      * @param y         The y coordinate within the map to initialise the object at.
      * @param width     The size of the object in the x-axis.
      * @param height    The size of the object in the y-axis.
      * @param team      The team the player is on.
      */
-    public Player(Array<Texture> frames, float fps, float x, float y, float width, float height, String team){
-        super(frames, fps, x, y, width, height, team);
+    public Player(float x, float y, float width, float height, String team){
+        super(x, y, width, height, team);
         lastMovementScore = 0;
         splashTime = 0;
 
         // Generate health
+        setMaxHealth(nonBoostedMaxHealth);
+        setCurrentHealth(getMaxHealth());
+    }
+    public void changeImage(Array<Texture> frames, float fps) throws Exception {
+        super.changeImage(frames,frames.size-1);
+        //Making the health bar.
         Array<Texture> sprites = new Array<>();
         sprites.add(new Texture("allyHealthBar.png"));
-        setMaxHealth(HEALTH);
-        playerHealth = new HealthBar(this,sprites);
+        createHealthBar();
+        playerHealth.changeImage(sprites);
     }
-
+    public void createHealthBar(){
+        playerHealth  = new HealthBar(this);
+    }
     /**
      * Called once per frame. Used to perform calculations such as player/camera movement.
      * @param screen    The main game screen.
@@ -86,7 +96,7 @@ public class Player extends GameObject {
 
         // Calculate collision && movement
         if (horizontal != 0 || vertical != 0){
-            move(speedMultiplier*SPEED*horizontal, speedMultiplier*SPEED*vertical);
+            move(speedMultiplier*SPEED*horizontal, speedMultiplier*SPEED*vertical, Gdx.graphics.getDeltaTime());
             previousDirectionX = horizontal;
             previousDirectionY = vertical;
             if (safeMove(screen.getMain().edges)) {
@@ -110,45 +120,19 @@ public class Player extends GameObject {
         // Track distance travelled
         distance += Math.pow((Math.pow((x - oldPos.x),2f) + Math.pow((y - oldPos.y),2f)),0.5f)/10f;
 
+        // Health-bar reduction
+        if(currentHealth > 0){
+            playerHealth.resize(currentHealth);
+        }else{
+            playerHealth = null;
+            screen.gameEnd(false);
+        }
+
+        timerManager();
         // Camera Calculations
         ProcessCamera(screen, camera);
+        //All of the timers that go in the game: Power ups, blood splash, health regen.
 
-        // Blood splash calculations
-        if(doBloodSplash){
-            if(splashTime > 1){
-                doBloodSplash = false;
-                splashTime = 0;
-            }else{
-                splashTime += 1;
-            }
-        }
-        //If it has been 10 seconds since the player was last hit, then health will increase.
-        if (TimeUtils.timeSinceMillis(timeLastHit) > timeBeforeRegen){
-            currentHealth += regenAmount;
-            //If current health goes above the max, then it will remain at max health.
-            if(currentHealth > maxHealth) currentHealth = maxHealth;
-            playerHealth.resize(currentHealth);
-        }
-
-        //Timing how long the GiveMoreDamage powerup lasts
-        if(TimeUtils.timeSinceMillis(damageIncreaseStart) > DAMAGE_POWERUP_TOTAL_LENGTH){
-            playerDamage = defaultDamage;
-        }
-
-        //Timing how long the Immunity powerup lasts
-        if (TimeUtils.timeSinceMillis(immunityStart) > IMMUNITY_POWERUP_LENGTH){
-            immune = false;
-        }
-
-        ////Timing how long the TakeMoreDamage powerup lasts
-        if (TimeUtils.timeSinceMillis(takeMoreDamageStart) > DAMAGE_POWERUP_TOTAL_LENGTH){
-            setMaxHealth(HEALTH);
-        }
-
-        //Timing how long the Speed powerup lasts
-        if (TimeUtils.timeSinceMillis(speedStart) > SPEED_POWERUP_TOTAL_LENGTH){
-            speedMultiplier = 1;
-        }
     }
 
     /**
@@ -171,36 +155,66 @@ public class Player extends GameObject {
      * @param y     The amount to move the object within the y-axis.
      */
     @Override
-    public void move(float x, float y){
-        this.x += x * Gdx.graphics.getDeltaTime();
-        this.y += y * Gdx.graphics.getDeltaTime();
-        playerHealth.move(this.x, this.y + height/2 + 2f); // Healthbar moves with player
+    public void move(float x, float y, float delta){
+        this.x += x * delta;
+        this.y += y * delta;
+        playerHealth.move(this.x, this.y + height/2 + 2f, delta); // Healthbar moves with player
     }
 
     /**
      * Called when a projectile hits the college.
-     * @param screen            The main game screen.
      * @param damage            The damage dealt by the projectile.
-     * @param projectileTeam    The team of the projectile.
      */
     @Override
-    public void takeDamage(GameScreen screen, float damage, String projectileTeam){
+    public void takeDamage(float damage){
         timeLastHit = TimeUtils.millis();
         if (immune == true){
             damage = 0;
         }
         currentHealth -= damage * enemyDamageMultiplier;
         doBloodSplash = true;
-
-        // Health-bar reduction
-        if(currentHealth > 0){
+    }
+    public void timerManager(){
+        // Blood splash calculations
+        if(doBloodSplash){
+            if(splashTime > 1){
+                doBloodSplash = false;
+                splashTime = 0;
+            }else{
+                splashTime += 1;
+            }
+        }
+        currentTime = TimeUtils.millis();
+        //If it has been 10 seconds since the player was last hit, then health will increase.
+        if (currentTime - timeLastHit > timeBeforeRegen){
+            currentHealth += regenAmount;
+            //If current health goes above the max, then it will remain at max health.
+            if(currentHealth > maxHealth) currentHealth = maxHealth;
             playerHealth.resize(currentHealth);
-        }else{
-            playerHealth = null;
-            screen.gameEnd(false);
+        }
+
+        //Timing how long the GiveMoreDamage powerup lasts
+        if(currentTime - damageIncreaseStart > DAMAGE_POWERUP_TOTAL_LENGTH){
+            playerDamage = defaultDamage;
+        }
+
+        //Timing how long the Immunity powerup lasts
+        if (currentTime - immunityStart > IMMUNITY_POWERUP_LENGTH){
+            setImmune(false);
+        }
+
+        ////Timing how long the TakeMoreDamage powerup lasts
+
+        if (TimeUtils.timeSinceMillis(takeMoreDamageStart) > DAMAGE_POWERUP_TOTAL_LENGTH){
+            setMaxHealth(nonBoostedMaxHealth);
+            if(currentHealth > maxHealth) currentHealth = maxHealth;
+        }
+
+        //Timing how long the Speed powerup lasts
+        if (currentTime - speedStart > SPEED_POWERUP_TOTAL_LENGTH){
+            speedMultiplier = 1;
         }
     }
-
     /**
      * Called after update(), calculates whether the camera should follow the player and passes it to the game screen.
      * @param screen    The main game screen.
@@ -218,6 +232,7 @@ public class Player extends GameObject {
      */
     @Override
     public void draw(SpriteBatch batch, float elapsedTime){
+        if (shader==null){generateShader();}
         // Generates the sprite
         Texture frame = anim.getKeyFrame((currentHealth/maxHealth > 0.66f) ? 0 : ((currentHealth/maxHealth > 0.33f) ? 2 : 1), true);
         if(doBloodSplash){
@@ -244,21 +259,31 @@ public class Player extends GameObject {
         this.damageIncreaseStart = TimeUtils.millis();
     }
     public void giveMaxHealth(){
-        this.setCurrentHealth(HEALTH);
+        this.setCurrentHealth(nonBoostedMaxHealth);
         playerHealth.resize(currentHealth);
     }
     public void immunityPowerup(){
         this.immunityStart = TimeUtils.millis();
-        immune = true;
+        setImmune(true);
     }
+    public boolean getImmune(){return immune;}
+    public void setImmune(boolean i){immune = i;}
     public void takeMoreDamagePowerup(){
         this.takeMoreDamageStart = TimeUtils.millis();
         setMaxHealth(TAKE_DAMAGE_INCREASE);
+        setCurrentHealth(getMaxHealth());
     }
     public void speedPowerup(){
         this.speedStart = TimeUtils.millis();
         speedMultiplier = 2;
     }
+
+    public long getSpeedStart() {
+        return speedStart;
+    }
+
+    public int getSpeedMultiplier(){return speedMultiplier;}
+    public void setNonBoostedMaxHealth(int mh){nonBoostedMaxHealth = mh;}
 
     /**
      * Called to set the difficulty at the start of the game.
@@ -268,22 +293,37 @@ public class Player extends GameObject {
         timeBeforeRegen = 5000;
         enemyDamageMultiplier = 1;
         defaultDamage = 30;
+        playerDamage = defaultDamage;
+        setNonBoostedMaxHealth(400);
         setMaxHealth(400);
+        setCurrentHealth(getMaxHealth());
+        difficulty = "Easy";
     }
     public void setNormal(){
         regenAmount = 0.03;
         timeBeforeRegen = 10000;
         enemyDamageMultiplier = 1.5f;
         defaultDamage = 20;
+        playerDamage = defaultDamage;
+        setNonBoostedMaxHealth(300);
         setMaxHealth(300);
+        setCurrentHealth(getMaxHealth());
+        difficulty = "Normal";
     }
     public void setHard(){
         regenAmount = 0;
         timeBeforeRegen = 10000;
         enemyDamageMultiplier = 2f;
         defaultDamage = 15;
+        playerDamage = defaultDamage;
+        setNonBoostedMaxHealth(200);
         setMaxHealth(200);
+        setCurrentHealth(getMaxHealth());
+        difficulty = "Hard";
     }
+    public String getDifficulty(){ return difficulty;}
+
+    public HealthBar getPlayerHealth(){return playerHealth;}
 
     public void printStats(){
         System.out.println("Regen: " + regenAmount);
@@ -292,6 +332,8 @@ public class Player extends GameObject {
         System.out.println("def dmg: " + defaultDamage);
         System.out.println("maxhealth: " + maxHealth);
         System.out.println("x: " + this.x + " y: " + y);
+        System.out.println("Immune: " + this.immune);
+        System.out.println("Current Health: " + this.currentHealth);
 
     }
 }

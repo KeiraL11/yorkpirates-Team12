@@ -2,6 +2,7 @@ package com.engteam14.yorkpirates;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -53,7 +54,7 @@ public class PauseScreen extends ScreenAdapter {
         });
 
         TextButton save = new TextButton("Save", skin);
-        resume.addListener(new ClickListener() {
+        save.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 gameSave() ;
             }
@@ -144,6 +145,9 @@ public class PauseScreen extends ScreenAdapter {
 
     private void gameSave() {
         screen.setPaused(true);
-        game.setScreen(screen);
+        Preferences prefs = Gdx.app.getPreferences("My Preferences");
+
+        prefs.putString("PlayerName", screen.getPlayerName());
+//        game.setScreen(screen);
     }
 }

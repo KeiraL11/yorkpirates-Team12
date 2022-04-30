@@ -2,6 +2,7 @@ package com.engteam14.yorkpirates;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -63,12 +64,18 @@ public class TitleScreen extends ScreenAdapter {
             }});
 
         // Generate buttons
-        ImageTextButton startButton = new ImageTextButton("Play", skin);
+        ImageTextButton startButton = new ImageTextButton("Start a New Game", skin);
+        ImageTextButton loadButton = new ImageTextButton("Load", skin);
         ImageTextButton quitButton = new ImageTextButton("Exit Game", skin, "Quit");
 
         startButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 gameStart();
+            }
+        });
+        loadButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                loadGame();
             }
         });
         quitButton.addListener(new ClickListener() {
@@ -92,6 +99,8 @@ public class TitleScreen extends ScreenAdapter {
         // Add buttons to table
         table.row();
         table.add(startButton).expand();
+        table.row();
+        table.add(loadButton).expand();
         table.row();
         table.add(quitButton).expand();
 
@@ -144,6 +153,24 @@ public class TitleScreen extends ScreenAdapter {
         } else{
             playerName = textBox.getText();
         }
+        // Set player name and unpause game
+        nextGame.setPaused(false);
+        nextGame.setPlayerName(playerName);
+        game.setScreen(nextGame);
+    }
+    private void loadGame(){
+
+        Preferences prefs = Gdx.app.getPreferences("My Preferences");
+
+//        prefs.putString("PlayerName", screen.getPlayerName());
+        // Get player name
+        String playerName = prefs.getString("PlayerName", "Player1");
+//        if ( textBox.getText().equals("Name (optional)") || textBox.getText().equals("")) {
+//            playerName = "Player";
+//
+//        } else{
+//            playerName = textBox.getText();
+//        }
         // Set player name and unpause game
         nextGame.setPaused(false);
         nextGame.setPlayerName(playerName);

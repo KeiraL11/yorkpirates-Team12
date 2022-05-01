@@ -33,11 +33,20 @@ jobs:
     - name: Run Unit Tests
       uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
       with:
-        arguments: tests:test
+        arguments: test
     - name: Publish Unit Test Results
-      uses: actions/upload-artifact@v2  # upload test results
-      if: success() || failure()        # run this step even if previous step failed
+      uses: actions/upload-artifact@v3
+      if: always()
       with:
-          name: test-results
-          path: jest-junit.xml
-      
+        name: Unit Test Report
+        path: '**/build/test-results/test/TEST-*.xml'
+        
+    - name: Deploy Test Reports to Website
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        enable_jekyll: true
+        deploy_key: ${{ secrets.SITE_DEPLOY_KEY }}
+        external_repository: KeiraL11/Team12Website
+        publish_branch: main
+        publish_dir: ./core/build/reports
+        destination_dir: /        

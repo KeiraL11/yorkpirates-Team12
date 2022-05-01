@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.Preferences;
 
 
 public class PauseScreen extends ScreenAdapter {
@@ -69,6 +70,13 @@ public class PauseScreen extends ScreenAdapter {
             }
         });
 
+        TextButton save = new TextButton("Save", skin);
+        save.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                gameSave() ;
+            }
+        });
+
         TextButton restart = new TextButton("End Game", skin);
         restart.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -110,6 +118,8 @@ public class PauseScreen extends ScreenAdapter {
         table.add(shop).expand();
         table.row();
         table.add(resume).expand();
+        table.row();
+        table.add(save).expand();
         table.row();
         table.add(restart).expand();
         table.row();
@@ -160,5 +170,12 @@ public class PauseScreen extends ScreenAdapter {
         }
         screen.setPaused(false);
         game.setScreen(screen);
+    }
+    private void gameSave() {
+        screen.setPaused(true);
+        Preferences prefs = Gdx.app.getPreferences("My Preferences");
+
+        prefs.putString("PlayerName", screen.getPlayerName());
+        prefs.putFloat("PlayerHealth", screen.getPlayer().currentHealth);
     }
 }

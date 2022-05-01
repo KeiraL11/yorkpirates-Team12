@@ -1,9 +1,6 @@
 package com.engteam14.yorkpirates;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
 import java.util.Objects;
 
@@ -67,7 +64,7 @@ public class Projectile extends GameObject{
             for(int i = 0; i < screen.colleges.size; i++) {
                 if (overlaps(screen.colleges.get(i).hitBox)){
                     if(!Objects.equals(team, screen.colleges.get(i).team)){ // Checks if projectile and college are on the same time
-                        screen.colleges.get(i).takeDamage(screen.getPlayer().getPlayerDamage(),team);
+                        screen.colleges.get(i).takeDamage(screen.getPlayer().getPlayerDamage());
                     }
                     destroy(screen);
                 }
@@ -75,7 +72,7 @@ public class Projectile extends GameObject{
             for(int i = 0; i < screen.enemies.size; i++) {
                 if (overlaps(screen.enemies.get(i).hitBox)){
                     if(!Objects.equals(team, screen.enemies.get(i).team)){ // Checks if projectile and college are on the same time
-                        screen.enemies.get(i).takeDamage(screen.getPlayer().getPlayerDamage(),team);
+                        screen.enemies.get(i).takeDamage(screen.getPlayer().getPlayerDamage());
                     }
                     destroy(screen);
                 }
@@ -83,7 +80,7 @@ public class Projectile extends GameObject{
         }else{
             if (overlaps(screen.getPlayer().hitBox)){
                 if(!Objects.equals(team, GameScreen.playerTeam)){ // Checks if projectile and player are on the same time
-                    screen.getPlayer().takeDamage(projectileDamage,team);
+                    screen.getPlayer().takeDamage(projectileDamage);
                 }
                 destroy(screen);
             }

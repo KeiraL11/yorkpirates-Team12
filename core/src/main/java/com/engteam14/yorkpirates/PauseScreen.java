@@ -22,6 +22,12 @@ public class PauseScreen extends ScreenAdapter {
     private final ShopScreen shopScreen;
     private final Stage pauseStage;
 
+    /**
+     * Called when the game needs to be paused.
+     * Contains the shop and saving.
+     * @param game      The base game, stores some important values.
+     * @param screen    the main game.
+     */
     public PauseScreen(YorkPirates game, GameScreen screen){
         this.game = game;
         this.screen = screen;

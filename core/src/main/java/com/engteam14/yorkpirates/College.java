@@ -22,18 +22,18 @@ public class College extends GameObject {
     private long lastShotFired;
     private final String collegeName;
     private final Array<Texture> collegeImages = new Array<>();
-    private Array<Texture> boatTexture = new Array<>();
-    private Array<GameObject> boats = new Array<>();
-    private Array<Float> boatRotations = new Array<>();
+    private final Array<Texture> boatTexture = new Array<>();
+    private final Array<GameObject> boats = new Array<>();
+    private final Array<Float> boatRotations = new Array<>();
 
     private boolean doBloodSplash = false;
-
-    private Projectile newProjectile;
 
     /**
      * Generates a college object within the game with animated frame(s) and a hit-box.
      * @param x         The x coordinate within the map to initialise the object at.
      * @param y         The y coordinate within the map to initialise the object at.
+     * @param width     The width of the object.
+     * @param height    The height of the object.
      * @param name      The name of the college.
      * @param team      The team the college is on.
      */
@@ -45,6 +45,15 @@ public class College extends GameObject {
         lastShotFired = 0;
         collegeName = name;
     }
+
+    /**
+     * Adds the images to the college, allows for headless testing.
+     * Needs images for the indicator arrows, health bar, surround boats and the college image.
+     * @param sprites       Array of textures that the college uses
+     * @param boatTexture   File path of the boats that the college uses.
+     * @param player        Add the player, so that the indicator arrows can point correctly.
+     * @throws Exception    inherited from changeImage()
+     */
     public void imageHandling(Array<Texture> sprites, String boatTexture, Player player) throws Exception {
         super.changeImage(sprites, 0);
         this.boatTexture.add(new Texture(Gdx.files.internal(boatTexture)));
@@ -65,15 +74,43 @@ public class College extends GameObject {
             healthBarSprite.add(new Texture("enemyHealthBar.png"));
             indicatorSprite.add(new Texture("questArrow.png"));
         }
-        collegeBar = new HealthBar(this);
+        createHealthBar();
         collegeBar.changeImage(healthBarSprite);
-        direction = new Indicator(this,player,
-                indicatorSprite.get(0).getWidth()/50f, indicatorSprite.get(0).getHeight()/50f);
+        createIndicator(player, indicatorSprite.get(0).getWidth()/50f,
+                indicatorSprite.get(0).getHeight()/50f);
         direction.changeImage(indicatorSprite);
     }
+
+    /**
+     * Creates the health bar for the college
+     */
+    public void createHealthBar(){collegeBar = new HealthBar(this);}
+
+    /**
+     * Getter for the health bar
+     * @return  health bar of the college.
+     */
+    public HealthBar getCollegeBar(){return collegeBar;}
+
+    /**
+     * Creates an arrow pointing to the college
+     * @param player    The player.
+     * @param width     width of the arrow.
+     * @param height    height of the arrow.
+     */
+    public void createIndicator(Player player, float width, float height){
+        direction  = new Indicator(this,player, width, height);
+    }
+
+    /**
+     * Getter for direction
+     * @return arrow which points to the college
+     */
+    public Indicator getDirection(){return direction;}
     /**
      * Called once per frame. Used to perform calculations such as collision.
-     * @param screen    The main game screen.
+     * @param screen        The main game screen.
+     * @throws Exception    Inherited from change image
      */
     public void update(GameScreen screen) throws Exception {
         direction.move();
@@ -91,7 +128,7 @@ public class College extends GameObject {
                     lastShotFired = TimeUtils.millis();
                     Array<Texture> sprites = new Array<>();
                     sprites.add(new Texture("tempProjectile.png"));
-                    newProjectile  = new Projectile(this, playerX, playerY, team);
+                    Projectile newProjectile = new Projectile(this, playerX, playerY, team);
                     newProjectile.changeImage(sprites);
                     screen.projectiles.add(newProjectile);
                 }
@@ -129,6 +166,7 @@ public class College extends GameObject {
                 int lootGained = 15;
                 screen.loot.Add(lootGained);
 
+                // Change the health bar to green, change the indicator arrow to green.
                 Array<Texture> healthBarSprite = new Array<>();
                 Array<Texture> indicatorSprite = new Array<>();
                 healthBarSprite.add(new Texture("allyHealthBar.png"));
@@ -157,12 +195,18 @@ public class College extends GameObject {
 
     /**
      * Called when a projectile hits the college.
-     * @param damage            The damage dealt by the projectile.
+     * @param damage    The damage dealt by the projectile.
      */
     public void takeDamage(float damage){
         super.takeDamage(damage);
+        // Add red tint when hit.
         doBloodSplash = true;
     }
+
+    /**
+     * Getter for doBloodSplash
+     * @return  whether the college should have a red tint from getting hit.
+     */
     public boolean getDoBloodSplash(){return doBloodSplash;}
 
     /**

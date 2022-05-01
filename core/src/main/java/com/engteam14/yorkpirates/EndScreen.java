@@ -100,7 +100,7 @@ public class EndScreen extends ScreenAdapter {
         endStage.addActor(table);
     }
 
-    /**1
+    /**
      * Is called once every frame. Runs update() and then renders the title screen.
      * @param delta The time passed since the previously rendered frame.
      */

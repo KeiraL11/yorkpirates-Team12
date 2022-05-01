@@ -1,8 +1,5 @@
 package com.engteam14.yorkpirates;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.utils.Array;
-
 public class HealthBar extends GameObject {
 
     private final float startWidth;
@@ -27,6 +24,11 @@ public class HealthBar extends GameObject {
         currentHealth = currentValue;
         this.width = startWidth * (currentValue/maxHealth);
     }
+
+    /**
+     * Getter for start width
+     * @return  starting width of the health bar.
+     */
     public float getStartWidth(){return startWidth;}
 
     /**

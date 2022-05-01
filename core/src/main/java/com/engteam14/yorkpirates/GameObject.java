@@ -43,19 +43,30 @@ public class GameObject {
     }
     /**
      * Called when the image needs to be changed or set.
-     * @param frames    The animation frames, or a single sprite.
-     * @param fps       The number of frames to be displayed per second.
+     * @param frames        The animation frames, or a single sprite.
+     * @param fps           The number of frames to be displayed per second.
+     * @throws Exception    inherited from other changeImage()
      */
     void changeImage(Array<Texture> frames, float fps) throws Exception {
         sprite = frames.get(0);
         anim = new Animation<>(fps==0?0:(1f/fps), frames);
     }
+
+    /**
+     * Allows for the image to be added to the object.
+     * @param frames        array of textures.
+     * @throws Exception    when no textures inside array
+     */
     void changeImage(Array<Texture> frames) throws Exception {
         if(frames.isEmpty()){
             throw new Exception("Texture array is empty");
         }
         this.changeImage(frames, frames.size-1);
     }
+
+    /**
+     * Creates a shader, used for the red tint when objects get hit.
+     */
     public void generateShader(){
         shader = new ShaderProgram(Gdx.files.internal("red.vsh"), Gdx.files.internal("red.fsh"));
     }
@@ -66,19 +77,25 @@ public class GameObject {
     void setMaxHealth(int mh){
         maxHealth = mh;
     }
+
+    /**
+     * Getter for max health
+     * @return  maximum health that the object can have.
+     */
     int getMaxHealth(){return maxHealth;}
+
+    /**
+     * setter for current health of the object.
+     * @param health    sets the current health to input.
+     */
     void setCurrentHealth(int health){
         currentHealth = health;
     }
 
     /**
-     * Called when a projectile hits the object.
-     * @param damage            The damage dealt by the projectile.
-     * @param projectileTeam    The team of the projectile.
+     * Called when a projectile hits the object
+     * @param damage    The damage dealt by the projectile.
      */
-    public void takeDamage(float damage, String projectileTeam) throws Exception {
-        this.takeDamage(damage);
-    }
     public void takeDamage(float damage){
         currentHealth -= damage;
     }
@@ -86,6 +103,7 @@ public class GameObject {
      * Moves the object within the x and y-axis of the game world.
      * @param x     The amount to move the object within the x-axis.
      * @param y     The amount to move the object within the y-axis.
+     * @param delta Standardises the movement speed.
      */
     public void move(float x, float y, float delta){
         this.x += x * delta;
@@ -109,6 +127,11 @@ public class GameObject {
         hitBox.x = x - width/2;
         hitBox.y = y - height/2;
     }
+
+    /**
+     * Getter for the hitbox
+     * @return  hit box of the object.
+     */
     public Rectangle getHitBox(){return hitBox;}
     /**
      * Checks if this object overlaps with another.

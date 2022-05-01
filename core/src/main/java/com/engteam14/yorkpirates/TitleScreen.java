@@ -166,14 +166,26 @@ public class TitleScreen extends ScreenAdapter {
         nextGame.setPlayerName(playerName);
         game.setScreen(nextGame);
     }
+
+    /**
+     * Set the game mode to easy
+     */
     private void setEasy(){
         nextGame.setEasy();
         gameStart();
     }
+
+    /**
+     * Set the game mode to normal
+     */
     private void setNormal(){
         nextGame.setNormal();
         gameStart();
     }
+
+    /**
+     * Set the game mode to hard.
+     */
     private void setHard(){
         nextGame.setHard();
         gameStart();

@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.ScreenUtils;
 
@@ -19,9 +18,8 @@ public class ShopScreen extends ScreenAdapter {
     private final YorkPirates game;
 
     private final GameScreen screen;
-    private final PauseScreen pauseScreen;
 
-    private Label loot;
+    private final Label loot;
 
     private final Stage shopStage;
 
@@ -29,10 +27,15 @@ public class ShopScreen extends ScreenAdapter {
     public boolean immunity_bought;
     public boolean take_less_damage_bought;
 
+    /**
+     * The shop, the user can buy power ups to use in the game.
+     * @param game          the base game
+     * @param screen        the main game screen.
+     * @param pauseScreen   the pause screen (used to get to the shop)
+     */
     public ShopScreen(YorkPirates game, GameScreen screen, PauseScreen pauseScreen) {
         this.game = game;
         this.screen = screen;
-        this.pauseScreen = pauseScreen;
 
         // Generate skin
         TextureAtlas atlas;

@@ -19,7 +19,7 @@ public class Player extends GameObject {
     private static final int DAMAGE_POWERUP_VALUE = 500;
     private static final int DAMAGE_POWERUP_TOTAL_LENGTH = 10000;
     private static final int IMMUNITY_POWERUP_LENGTH = 10000;
-    private static final int TAKE_DAMAGE_INCREASE = 350;
+    private static final int TAKE_DAMAGE_INCREASE = 450;
     private static final int SPEED_POWERUP_TOTAL_LENGTH = 25000;
     private int speedMultiplier = 1;
     private static int timeBeforeRegen = 10000;
@@ -42,7 +42,6 @@ public class Player extends GameObject {
     private boolean doBloodSplash = false;
 
     private float defaultDamage = 20;
-    private float weatherMovement = 1;
 
     private float playerDamage = 20;
     public long damageIncreaseStart;
@@ -93,8 +92,10 @@ public class Player extends GameObject {
                 - ((Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) ? 1 : 0);
         int vertical = ((Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)) ? 1 : 0)
                 - ((Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)) ? 1 : 0);
-        //weather
-        weatherMovement = 1;
+
+        // Weather
+        // The player moves at 0.5 times speed when inside bad weather.
+        float weatherMovement = 1;
         for(int i = 0; i<screen.weatherArray.size; i++){
             if (this.overlaps(screen.weatherArray.get(i).hitBox)){
                 weatherMovement = 0.5f;
@@ -102,10 +103,13 @@ public class Player extends GameObject {
         }
         // Calculate collision && movement
         if (horizontal != 0 || vertical != 0){
-            move(speedMultiplier*weatherMovement*SPEED*horizontal, speedMultiplier*weatherMovement*SPEED*vertical, Gdx.graphics.getDeltaTime());
+            // Move the player, also change the amount the player
+            move(speedMultiplier* weatherMovement *SPEED*horizontal,
+                    speedMultiplier* weatherMovement *SPEED*vertical, Gdx.graphics.getDeltaTime());
             previousDirectionX = horizontal;
             previousDirectionY = vertical;
             if (safeMove(screen.getMain().edges)) {
+                //Add points to the player when they move
                 if (TimeUtils.timeSinceMillis(lastMovementScore) > POINT_FREQUENCY) {
                     lastMovementScore = TimeUtils.millis();
                     screen.points.Add(1);
@@ -122,6 +126,7 @@ public class Player extends GameObject {
                 }
             }
         }
+        //Update the hitbox of the player after they have moved.
         updateHitboxPos();
         // Track distance travelled
         distance += Math.pow((Math.pow((x - oldPos.x),2f) + Math.pow((y - oldPos.y),2f)),0.5f)/10f;
@@ -159,6 +164,7 @@ public class Player extends GameObject {
      * Moves the player within the x and y-axis of the game world.
      * @param x     The amount to move the object within the x-axis.
      * @param y     The amount to move the object within the y-axis.
+     * @param delta Allows for the standardised movement speed.
      */
     @Override
     public void move(float x, float y, float delta){
@@ -175,12 +181,27 @@ public class Player extends GameObject {
     @Override
     public void takeDamage(float damage){
         timeLastHit = TimeUtils.millis();
-        if (immune == true){
+        // If the immunity power up is active, take no damage.
+        if (immune){
             damage = 0;
         }
+        // The damage that the player takes changes depending on difficulty level
+        // enemyDamageMultiplier changes depending on the difficulty methods.
         currentHealth -= damage * enemyDamageMultiplier;
+        // Add the red tint to the player when hit.
         doBloodSplash = true;
     }
+
+    /**
+     * Manages all of the various timers that the player needs to keep track of.
+     * Resets values to the default values, when the timers run out.
+     *      - Red tint that the player has when they get hit.
+     *      - Natural regeneration of health.
+     *      - damage increase  power up {@link #damageIncrease()}
+     *      - immunity power up {@link #immunityPowerup()}
+     *      - temporary health increase {@link #takeMoreDamagePowerup()}
+     *      - speed increase power up {@link #speedPowerup()}
+     */
     public void timerManager(){
         // Blood splash calculations
         if(doBloodSplash){
@@ -240,55 +261,120 @@ public class Player extends GameObject {
     @Override
     public void draw(SpriteBatch batch, float elapsedTime){
         if (shader==null){generateShader();}
-        // Generates the sprite
+        // Generates the sprite, the image changes depending on the players current health.
         Texture frame = anim.getKeyFrame((currentHealth/maxHealth > 0.66f) ? 0 : ((currentHealth/maxHealth > 0.33f) ? 2 : 1), true);
+        // Add a red tint if the player has been hit.
         if(doBloodSplash){
             batch.setShader(shader); // Set our grey-out shader to the batch
+            //Rotate the image so that the ship faces the direction of travel.
         } float rotation = (float) Math.toDegrees(Math.atan2(previousDirectionY, previousDirectionX));
 
-        // Draws sprite and health-bar
+        // Draws sprite
         batch.draw(frame, x - width/2, y - height/2, width/2, height/2, width, height, 1f, 1f, rotation, 0, 0, frame.getWidth(), frame.getHeight(), false, false);
         batch.setShader(null);
     }
 
+    /**
+     * Draws the Player's health bar
+     * @param batch     The batch used to draw player health.
+     */
     public void drawHealthBar(SpriteBatch batch){
         if(!(playerHealth == null)) playerHealth.draw(batch, 0);
     }
 
+    /**
+     * Getter for distance travelled
+     * @return total distance travelled.
+     */
     public float getDistance() {
         return distance;
     }
+
+    /**
+     * Getter for player's current damage.
+     * @return how much the player's projectiles damage.
+     */
     public float getPlayerDamage() {
         return playerDamage;
     }
+
+    //Power up methods.
+
+    /**
+     * Damage increases for a set amount of real world time.
+     */
     public void damageIncrease(){
         this.playerDamage = DAMAGE_POWERUP_VALUE;
         this.damageIncreaseStart = TimeUtils.millis();
     }
+
+    /**
+     * Give the player max health.
+     */
     public void giveMaxHealth(){
         this.setCurrentHealth(nonBoostedMaxHealth);
         playerHealth.resize(currentHealth);
     }
+
+    /**
+     * Gives the player immunity, projectiles no longer do damage for a set amount of time.
+     */
     public void immunityPowerup(){
         this.immunityStart = TimeUtils.millis();
         setImmune(true);
     }
+
+    /**
+     * Getter for the immune value.
+     * @return whether the player is immune from damage.
+     */
     public boolean getImmune(){return immune;}
+
+    /**
+     * Setter for the immune value.
+     * @param i change the attribute "immune" to the value of input.
+     */
     public void setImmune(boolean i){immune = i;}
+
+    /**
+     * The player's maximum health increases temporarily
+     * player is also given max health.
+     */
     public void takeMoreDamagePowerup(){
         this.takeMoreDamageStart = TimeUtils.millis();
         setMaxHealth(TAKE_DAMAGE_INCREASE);
         setCurrentHealth(getMaxHealth());
     }
+
+    /**
+     * The player can travel 2 times faster temporarily.
+     */
     public void speedPowerup(){
         this.speedStart = TimeUtils.millis();
         speedMultiplier = 2;
     }
+
+    /**
+     * Getter for the speed multiplier
+     * @return the magnitude of the speed increase of the player when the speed powerup is active.
+     */
     public int getSpeedMultiplier(){return speedMultiplier;}
+
+    /**
+     * Setter for maximum health, when {@link #takeMoreDamagePowerup()} isn't active.
+     * @param mh    Set the value of maximum health without powerups.
+     */
     public void setNonBoostedMaxHealth(int mh){nonBoostedMaxHealth = mh;}
 
     /**
-     * Called to set the difficulty at the start of the game.
+     * Getter for nonBoostedMaxHealth
+     * @return  Get the value of maximum health without power ups.
+     */
+    public int getNonBoostedMaxHealth(){return nonBoostedMaxHealth;}
+
+    //Difficulty Methods
+    /**
+     * Sets the difficulty to easy
      */
     public void setEasy(){
         regenAmount = 0.06;
@@ -296,37 +382,63 @@ public class Player extends GameObject {
         enemyDamageMultiplier = 1;
         defaultDamage = 30;
         playerDamage = defaultDamage;
-        setNonBoostedMaxHealth(400);
         setMaxHealth(400);
+        setNonBoostedMaxHealth(getMaxHealth());
         setCurrentHealth(getMaxHealth());
         difficulty = "Easy";
     }
+
+    /**
+     * Sets the difficulty to Normal
+     */
     public void setNormal(){
         regenAmount = 0.03;
         timeBeforeRegen = 10000;
         enemyDamageMultiplier = 1.5f;
         defaultDamage = 20;
         playerDamage = defaultDamage;
-        setNonBoostedMaxHealth(300);
         setMaxHealth(300);
+        setNonBoostedMaxHealth(getMaxHealth());
         setCurrentHealth(getMaxHealth());
         difficulty = "Normal";
     }
+
+    /**
+     * Sets the difficulty to hard.
+     */
     public void setHard(){
         regenAmount = 0;
         timeBeforeRegen = 10000;
         enemyDamageMultiplier = 2f;
         defaultDamage = 15;
         playerDamage = defaultDamage;
-        setNonBoostedMaxHealth(200);
         setMaxHealth(200);
+        setNonBoostedMaxHealth(getMaxHealth());
         setCurrentHealth(getMaxHealth());
         difficulty = "Hard";
     }
+
+    /**
+     * Getter for the string difficulty.
+     * see {@link #setEasy()}, {@link #setNormal()}, {@link #setHard()} for attribute values.
+     * @return difficulty - implies what some of the other attribute values are set to.
+     */
     public String getDifficulty(){ return difficulty;}
 
+    /**
+     * Getter for the health bar of the player.
+     * @return playerHealth - allows for access to the HealthBar methods through the player
+     */
     public HealthBar getPlayerHealth(){return playerHealth;}
 
+    /**
+     * Getter for doBloodSplash
+     * @return  whether the player should be tinted red.
+     */
+    public boolean isDoBloodSplash(){return doBloodSplash;}
+    /**
+     * Debugging tool, prints certain attributes of the Player class.
+     */
     public void printStats(){
         System.out.println("Regen: " + regenAmount);
         System.out.println("timeBeforeRegen: " + timeBeforeRegen);
@@ -337,6 +449,5 @@ public class Player extends GameObject {
         System.out.println("x: " + this.x + " y: " + y);
         System.out.println("Immune: " + this.immune);
         System.out.println("Current Health: " + this.currentHealth);
-
     }
 }

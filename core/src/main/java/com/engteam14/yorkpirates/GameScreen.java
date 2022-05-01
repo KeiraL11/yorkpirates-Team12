@@ -19,8 +19,6 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import java.sql.Time;
-
 public class GameScreen extends ScreenAdapter {
     // Team name constants
     public static final String playerTeam = "PLAYER";
@@ -48,7 +46,7 @@ public class GameScreen extends ScreenAdapter {
     private final Array<Texture> alcuinSprite;
     private final Array<Texture> derwentSprite;
     private final Array<Texture> langwithSprite;
-    private Array<Texture> sprites;
+    private final Array<Texture> sprites;
 
     //Weather
     public Array<Weather> weatherArray;
@@ -65,8 +63,7 @@ public class GameScreen extends ScreenAdapter {
     private Vector3 followPos;
     private boolean followPlayer = false;
 
-    private Projectile newProjectile;
-
+    // Enemy Spawning
     private static int totalEnemiesAllowed = 5;
     private static int enemySpawnFreqency = 1000;
     private static long timeLastEnemySpawned;
@@ -155,13 +152,6 @@ public class GameScreen extends ScreenAdapter {
         createPowerUps();
         // Initialise weather
         createWeather();
-
-
-//        Enemy newEnemy = new Enemy(1000, 725,
-//                32, 16,
-//                enemyTeam);
-//        newEnemy.changeImage(alcuinSprite);
-//        enemies.add(newEnemy);
 
         // Initialise colleges
         College.capturedCount = 0;
@@ -292,7 +282,7 @@ public class GameScreen extends ScreenAdapter {
             Vector3 mouseVector = new Vector3(Gdx.input.getX(), Gdx.input.getY(),0);
             Vector3 mousePos = game.camera.unproject(mouseVector);
 
-            newProjectile = new Projectile(player, mousePos.x, mousePos.y, playerTeam);
+            Projectile newProjectile = new Projectile(player, mousePos.x, mousePos.y, playerTeam);
             newProjectile.changeImage(sprites);
             projectiles.add(newProjectile);
             gameHUD.endTutorial();
@@ -346,6 +336,11 @@ public class GameScreen extends ScreenAdapter {
         //Add the enemy to the array of enemies.
         enemies.add(newEnemy);
     }
+    // Creation methods, made to reduce the constructor size.
+    /**
+     * creates the various power ups on the map.
+     * @throws Exception inherited from changeImage()
+     */
     private void createPowerUps() throws Exception {
         //PowerUps
         PowerUps newPower;
@@ -398,24 +393,34 @@ public class GameScreen extends ScreenAdapter {
         powerups.add(newPower);
         powerSprites.clear();
     }
+
+    /**
+     * Creates the weather
+     * @throws Exception    inherited from changeImage()
+     */
     private void createWeather() throws Exception {
         // Initialise weather
         Weather newWeather;
         sprites.add(new Texture("Ice_5_16x16.png"));
-        newWeather = new Weather( 1920, 1520, 5f,
-                sprites.get(0).getWidth() * 5f, sprites.get(0).getHeight() * 5f, "");
+        newWeather = new Weather( 1920, 1520, sprites.get(0).getWidth() * 5f,
+                sprites.get(0).getHeight() * 5f, "");
         newWeather.changeImage(sprites);
         weatherArray.add(newWeather);
-        newWeather = new Weather(2080, 560, 5f,
-                sprites.get(0).getWidth() * 5f, sprites.get(0).getHeight() * 5f, "");
+        newWeather = new Weather(2080, 560, sprites.get(0).getWidth() * 5f,
+                sprites.get(0).getHeight() * 5f, "");
         newWeather.changeImage(sprites);
         weatherArray.add(newWeather);
-        newWeather = new Weather(1000, 600, 5f,
-                sprites.get(0).getWidth() * 5f, sprites.get(0).getHeight() * 5f, "");
+        newWeather = new Weather(1000, 600, sprites.get(0).getWidth() * 5f,
+                sprites.get(0).getHeight() * 5f, "");
         newWeather.changeImage(sprites);
         weatherArray.add(newWeather);
         sprites.clear();
     }
+
+    /**
+     * creates the colleges.
+     * @throws Exception    inherited from changeImage()
+     */
     private void createColleges() throws Exception{
         College newCollege;
         Array<Texture> collegeSprites = new Array<>();
@@ -527,6 +532,11 @@ public class GameScreen extends ScreenAdapter {
     // Setting the difficulty of the game
     // The player method will change properties around the player
     // the rest will change the different enemy spawning properties.
+
+    /**
+     * Sets the game to "easy mode"
+     * No ambushes
+     */
     public void setEasy(){
         player.setEasy();
         enemySpawnFreqency = 15000;
@@ -536,6 +546,10 @@ public class GameScreen extends ScreenAdapter {
         ambush = false;
         ambushSize = 0;
     }
+
+    /**
+     * Sets the game to "normal mode"
+     */
     public void setNormal(){
         player.setNormal();
         enemySpawnFreqency = 10000;
@@ -545,6 +559,10 @@ public class GameScreen extends ScreenAdapter {
         ambush = true;
         ambushSize = 3;
     }
+
+    /**
+     * Sets the game to "hard mode"
+     */
     public void setHard(){
         player.setHard();
         enemySpawnFreqency = 5000;
@@ -598,6 +616,10 @@ public class GameScreen extends ScreenAdapter {
         tiledMap.dispose();
         music.dispose();
     }
+
+    /**
+     * Used for debugging.
+     */
     public void printElaspedTime(){
         System.out.println("Elasped Time: " + getElapsedTime());
     }

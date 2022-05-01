@@ -204,9 +204,19 @@ public class HUD {
 
     }
 
+    /**
+     * Changes the name of the player
+     * @param screen    the main game screen
+     */
     public void updateName(GameScreen screen) { tasksTitle.setText(screen.getPlayerName() +"'s Tasks:"); }
 
+    /**
+     * Removes the tutorial overlay
+     */
     public void endTutorial() { tutorialComplete = true; }
 
+    /**
+     * Ends the game.
+     */
     public void setGameEndable() {canEndGame = true; }
 }

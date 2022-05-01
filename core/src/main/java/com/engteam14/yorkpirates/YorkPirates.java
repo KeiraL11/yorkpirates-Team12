@@ -24,7 +24,7 @@ public class YorkPirates extends Game {
 
 	// Constants
 	public static final boolean DEBUG_ON = false; // Determines if the game runs in DEBUG mode.
-	private static final int SCREEN_TO_PIXEL_RATIO = 16; // Determines the pixel ratio of the game.
+	private static final int SCREEN_TO_PIXEL_RATIO = 64; // Determines the pixel ratio of the game.
 
 	/**
 	 * Initialises base game class.
@@ -66,7 +66,11 @@ public class YorkPirates extends Game {
 		}
 
 		// Sets the screen to the title screen
-		setScreen(new TitleScreen(this));
+		try {
+			setScreen(new TitleScreen(this));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**

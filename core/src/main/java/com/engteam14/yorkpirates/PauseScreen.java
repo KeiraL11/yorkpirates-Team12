@@ -2,7 +2,6 @@ package com.engteam14.yorkpirates;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -13,17 +12,22 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.Preferences;
 
 
 public class PauseScreen extends ScreenAdapter {
 
     private final YorkPirates game;
     private final GameScreen screen;
+
+    private final ShopScreen shopScreen;
     private final Stage pauseStage;
 
     public PauseScreen(YorkPirates game, GameScreen screen){
         this.game = game;
         this.screen = screen;
+
+        shopScreen = new ShopScreen(game, screen,this);
 
         // Generate skin
         TextureAtlas atlas;
@@ -46,6 +50,13 @@ public class PauseScreen extends ScreenAdapter {
         title.setScaling(Scaling.fit);
 
         // Generate buttons
+        TextButton shop = new TextButton("Shop", skin);
+        shop.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(shopScreen);
+            }
+        });
+
         TextButton resume = new TextButton("Resume", skin);
         resume.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -59,7 +70,6 @@ public class PauseScreen extends ScreenAdapter {
                 gameSave() ;
             }
         });
-
 
         TextButton restart = new TextButton("End Game", skin);
         restart.addListener(new ClickListener() {
@@ -98,6 +108,8 @@ public class PauseScreen extends ScreenAdapter {
         table.add(title).expand();
 
         // Add buttons to table
+        table.row();
+        table.add(shop).expand();
         table.row();
         table.add(resume).expand();
         table.row();
@@ -139,17 +151,25 @@ public class PauseScreen extends ScreenAdapter {
      * Generates a HUD object within the game that controls elements of the UI.
      */
     private void gameContinue() {
+        if (shopScreen.immunity_bought) {
+            screen.getPlayer().immunityPowerup();
+        }
+
+        if (shopScreen.give_more_damage_bought) {
+            screen.getPlayer().damageIncrease();
+        }
+
+        if (shopScreen.take_less_damage_bought) {
+            screen.getPlayer().takeMoreDamagePowerup();
+        }
         screen.setPaused(false);
         game.setScreen(screen);
     }
-
     private void gameSave() {
         screen.setPaused(true);
         Preferences prefs = Gdx.app.getPreferences("My Preferences");
 
         prefs.putString("PlayerName", screen.getPlayerName());
         prefs.putFloat("PlayerHealth", screen.getPlayer().currentHealth);
-//        prefs.putInteger("PlayerHealthTest", playerH)
-//        game.setScreen(screen);
     }
 }

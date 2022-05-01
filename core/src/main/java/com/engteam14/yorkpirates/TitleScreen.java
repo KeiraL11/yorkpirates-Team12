@@ -2,7 +2,6 @@ package com.engteam14.yorkpirates;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -12,12 +11,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.Preferences;
 
 public class TitleScreen extends ScreenAdapter {
     private final YorkPirates game;
     private final GameScreen nextGame;
     private final Stage stage;
-//    private final GameScreen screen;
 
     private final TextField textBox;
     private final Cell<Image> titleCell;
@@ -28,9 +27,8 @@ public class TitleScreen extends ScreenAdapter {
      * Initialises the title screen, as well as relevant textures and data it may contain.
      * @param game  Passes in the base game class for reference.
      */
-    public TitleScreen(YorkPirates game){
+    public TitleScreen(YorkPirates game) throws Exception {
         this.game = game;
-//        this.screen = screen;
 
         // Generates main gameplay for use as background
         nextGame = new GameScreen(game);
@@ -66,18 +64,31 @@ public class TitleScreen extends ScreenAdapter {
             }});
 
         // Generate buttons
-        ImageTextButton startButton = new ImageTextButton("Start a New Game", skin);
+
         ImageTextButton loadButton = new ImageTextButton("Load", skin);
+        ImageTextButton easyButton = new ImageTextButton("Easy", skin);
+        ImageTextButton normalButton = new ImageTextButton("Normal", skin);
+        ImageTextButton hardButton = new ImageTextButton("Hard", skin);
         ImageTextButton quitButton = new ImageTextButton("Exit Game", skin, "Quit");
 
-        startButton.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                gameStart();
-            }
-        });
         loadButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 loadGame();
+            }
+        });
+        easyButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                setEasy();
+            }
+        });
+        normalButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                setNormal();
+            }
+        });
+        hardButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                setHard();
             }
         });
         quitButton.addListener(new ClickListener() {
@@ -100,9 +111,13 @@ public class TitleScreen extends ScreenAdapter {
 
         // Add buttons to table
         table.row();
-        table.add(startButton).expand();
-        table.row();
         table.add(loadButton).expand();
+        table.row();
+        table.add(easyButton).expand();
+        table.row();
+        table.add(normalButton).expand();
+        table.row();
+        table.add(hardButton).expand();
         table.row();
         table.add(quitButton).expand();
 
@@ -139,6 +154,7 @@ public class TitleScreen extends ScreenAdapter {
      */
     private void update(){
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)){
+            nextGame.setNormal();
             gameStart();
         }
     }
@@ -159,6 +175,18 @@ public class TitleScreen extends ScreenAdapter {
         nextGame.setPaused(false);
         nextGame.setPlayerName(playerName);
         game.setScreen(nextGame);
+    }
+    private void setEasy(){
+        nextGame.setEasy();
+        gameStart();
+    }
+    private void setNormal(){
+        nextGame.setNormal();
+        gameStart();
+    }
+    private void setHard(){
+        nextGame.setHard();
+        gameStart();
     }
     private void loadGame(){
 

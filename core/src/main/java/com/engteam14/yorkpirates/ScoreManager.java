@@ -25,7 +25,6 @@ public class ScoreManager {
      */
     public void Add(int amount){
         score += amount;
-
     }
 
     /**
@@ -43,4 +42,5 @@ public class ScoreManager {
     public String GetString() {
         return Integer.toString(score);
     }
+
 }

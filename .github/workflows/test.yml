@@ -50,5 +50,3 @@ jobs:
         publish_branch: main
         publish_dir: ./core/build/reports
         destination_dir: /        
-        
-      

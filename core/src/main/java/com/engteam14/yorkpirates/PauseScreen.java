@@ -70,10 +70,11 @@ public class PauseScreen extends ScreenAdapter {
             }
         });
 
-        TextButton save = new TextButton("Save", skin);
+        TextButton save = new TextButton("Save & Quit", skin);
         save.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                gameSave() ;
+                gameSave();
+                Gdx.app.exit();
             }
         });
 
@@ -173,9 +174,13 @@ public class PauseScreen extends ScreenAdapter {
     }
     private void gameSave() {
         screen.setPaused(true);
-        Preferences prefs = Gdx.app.getPreferences("My Preferences");
 
-        prefs.putString("PlayerName", screen.getPlayerName());
-        prefs.putFloat("PlayerHealth", screen.getPlayer().currentHealth);
+        game.prefs.putString("PlayerName", screen.getPlayerName());
+        game.prefs.putFloat("PlayerHealth", screen.getPlayer().currentHealth);
+        game.prefs.putFloat("Playerx", screen.getPlayer().x);
+        game.prefs.putFloat("Playery", screen.getPlayer().y);
+        game.prefs.putInteger("PlayerLoot", screen.loot.Get());
+        game.prefs.putInteger("PlayerPoints", screen.points.Get());
+        game.prefs.flush();
     }
 }

@@ -2,6 +2,7 @@ package com.engteam14.yorkpirates;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -63,11 +64,17 @@ public class TitleScreen extends ScreenAdapter {
             }});
 
         // Generate buttons
+        ImageTextButton loadButton = new ImageTextButton("Load Game Save", skin);
         ImageTextButton easyButton = new ImageTextButton("Easy", skin);
         ImageTextButton normalButton = new ImageTextButton("Normal", skin);
         ImageTextButton hardButton = new ImageTextButton("Hard", skin);
         ImageTextButton quitButton = new ImageTextButton("Exit Game", skin, "Quit");
 
+        loadButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                loadGame();
+            }
+        });
         easyButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 setEasy();
@@ -102,6 +109,8 @@ public class TitleScreen extends ScreenAdapter {
         table.add(textBoxFiller).expand().fill();
 
         // Add buttons to table
+        table.row();
+        table.add(loadButton).expand();
         table.row();
         table.add(easyButton).expand();
         table.row();
@@ -189,5 +198,23 @@ public class TitleScreen extends ScreenAdapter {
     private void setHard(){
         nextGame.setHard();
         gameStart();
+    }
+
+    private void loadGame(){
+
+        //Preferences prefs = Gdx.app.getPreferences("My Preferences");
+
+//        prefs.putString("PlayerName", screen.getPlayerName());
+        // Get player name
+        String playerName = game.prefs.getString("PlayerName");
+        nextGame.getPlayer().currentHealth = game.prefs.getFloat("PlayerHealth", 1);
+        //nextGame.getPlayer().x = game.prefs.getFloat("Playerx");
+        //nextGame.getPlayer().y = game.prefs.getFloat("Playery");
+        nextGame.loot.score = game.prefs.getInteger("PlayerLoot");
+        nextGame.points.score = game.prefs.getInteger("PlayerPoints");
+
+        nextGame.setPaused(false);
+        nextGame.setPlayerName(playerName);
+        game.setScreen(nextGame);
     }
 }

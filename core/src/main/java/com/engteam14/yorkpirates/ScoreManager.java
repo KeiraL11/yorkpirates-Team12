@@ -2,7 +2,7 @@ package com.engteam14.yorkpirates;
 
 public class ScoreManager {
 
-    private int score;
+    public int score;
 
     /**
      * Initialises a ScoreManager with a default score of 0.

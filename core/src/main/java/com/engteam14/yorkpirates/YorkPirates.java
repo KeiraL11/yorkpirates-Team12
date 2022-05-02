@@ -2,6 +2,7 @@ package com.engteam14.yorkpirates;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -11,6 +12,8 @@ import com.badlogic.gdx.utils.Array;
 public class YorkPirates extends Game {
 
 	// Global values
+	public Preferences prefs;
+	//prefs = Gdx.app.getPreferences("My Preferences");
 	public BitmapFont font;
 	public SpriteBatch batch;
 	public OrthographicCamera camera;
@@ -31,6 +34,8 @@ public class YorkPirates extends Game {
 	 */
 	@Override
 	public void create () {
+
+		prefs = Gdx.app.getPreferences("My Preferences");
 		// Graphics settings
 		Gdx.graphics.setForegroundFPS(30);
 		Gdx.graphics.setVSync(true);

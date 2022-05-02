@@ -9,13 +9,6 @@ import static org.junit.Assert.*;
 
 @RunWith(GdxTestRunner.class)
 public class GameObjectTests {
-    private Array<Array<Boolean>> edges;
-    public GameObjectTests(){
-        edges = new Array<>();
-        Array<Boolean> edgesRow = new Array<>();
-        edges.add(edgesRow);
-
-    }
     @Test
     public void oneEqualsOne(){
         assertEquals(1,1);

@@ -181,6 +181,14 @@ public class PauseScreen extends ScreenAdapter {
         game.prefs.putFloat("Playery", screen.getPlayer().y);
         game.prefs.putInteger("PlayerLoot", screen.loot.Get());
         game.prefs.putInteger("PlayerPoints", screen.points.Get());
+        game.prefs.putInteger("capturedCount", College.capturedCount);
+
+        for (int i = 0; i < screen.colleges.size; i++) {
+            game.prefs.putFloat(screen.colleges.get(i).getCollegeName() + "Health", screen.colleges.get(i).currentHealth);
+            game.prefs.putString(screen.colleges.get(i).getCollegeName() + "Team", screen.colleges.get(i).team);
+            game.prefs.putBoolean(screen.colleges.get(i).getCollegeName() + "Captured", screen.colleges.get(i).captured);
+        }
+
         game.prefs.flush();
     }
 }

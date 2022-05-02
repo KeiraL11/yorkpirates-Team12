@@ -15,6 +15,9 @@ public class College extends GameObject {
 
     public static int capturedCount = 0;
 
+    public boolean captured = false;
+    private boolean captureUpdated = false;
+
     private HealthBar collegeBar;
     private Indicator direction;
 
@@ -118,6 +121,10 @@ public class College extends GameObject {
         float playerY = screen.getPlayer().y;
         boolean nearPlayer = abs(this.x - playerX) < (Gdx.graphics.getWidth()/15f) && abs(this.y - playerY) < (Gdx.graphics.getHeight()/10f);
 
+        if (captured && !captureUpdated) {
+            capturedUpdate(screen);
+        }
+
         if(nearPlayer || screen.isPaused()){
             direction.setVisible(false);
 
@@ -160,29 +167,13 @@ public class College extends GameObject {
             collegeBar.resize(currentHealth);
         }else{
             if(!Objects.equals(team, GameScreen.playerTeam)){ // Checks if the college is an enemy of the player
+                captured = true;
                 // College taken over
                 int pointsGained = 50;
                 screen.points.Add(pointsGained);
                 int lootGained = 15;
                 screen.loot.Add(lootGained);
-
-                // Change the health bar to green, change the indicator arrow to green.
-                Array<Texture> healthBarSprite = new Array<>();
-                Array<Texture> indicatorSprite = new Array<>();
-                healthBarSprite.add(new Texture("allyHealthBar.png"));
-                indicatorSprite.add(new Texture("allyArrow.png"));
-                boatTexture.clear();
-                boatTexture.add(screen.getPlayer().anim.getKeyFrame(0f));
-
-                Array<Texture> sprites = new Array<>();
-                sprites.add(collegeImages.get(1));
-                changeImage(sprites,0);
-
-                collegeBar.changeImage(healthBarSprite,0);
-                currentHealth = maxHealth;
-                collegeBar.resize(currentHealth);
                 College.capturedCount++;
-                direction.changeImage(indicatorSprite,0);
                 team = GameScreen.playerTeam;
             }else{
                 // Destroy college
@@ -191,6 +182,25 @@ public class College extends GameObject {
                 destroy(screen);
             }
         }
+    }
+
+    public void capturedUpdate (GameScreen screen) throws Exception{
+        // Change the health bar to green, change the indicator arrow to green.
+        Array<Texture> healthBarSprite = new Array<>();
+        Array<Texture> indicatorSprite = new Array<>();
+        healthBarSprite.add(new Texture("allyHealthBar.png"));
+        indicatorSprite.add(new Texture("allyArrow.png"));
+        boatTexture.clear();
+        boatTexture.add(screen.getPlayer().anim.getKeyFrame(0f));
+
+        Array<Texture> sprites = new Array<>();
+        sprites.add(collegeImages.get(1));
+        changeImage(sprites,0);
+
+        collegeBar.changeImage(healthBarSprite,0);
+        currentHealth = maxHealth;
+        collegeBar.resize(currentHealth);
+        direction.changeImage(indicatorSprite,0);
     }
 
     /**
@@ -254,5 +264,9 @@ public class College extends GameObject {
         boats.add(newBoat);
         //boats.add(new GameObject(boatTexture, 0, this.x+x, this.y+y, 25, 12, team));
         boatRotations.add(rotation);
+    }
+
+    public String getCollegeName() {
+        return collegeName;
     }
 }

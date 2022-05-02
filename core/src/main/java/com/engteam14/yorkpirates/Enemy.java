@@ -204,5 +204,7 @@ public class Enemy extends GameObject {
      * called when the enemy needs to be destroyed.
      * @param screen    main game screen.
      */
-    private void destroy(GameScreen screen){ screen.enemies.removeValue(this,true);}
+    private void destroy(GameScreen screen){
+        screen.enemies.removeValue(this,true);
+    }
 }

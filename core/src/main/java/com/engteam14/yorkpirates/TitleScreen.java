@@ -72,7 +72,11 @@ public class TitleScreen extends ScreenAdapter {
 
         loadButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                loadGame();
+                try {
+                    loadGame();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
         easyButton.addListener(new ClickListener() {
@@ -200,18 +204,35 @@ public class TitleScreen extends ScreenAdapter {
         gameStart();
     }
 
-    private void loadGame(){
+    private void loadGame() throws Exception {
 
         //Preferences prefs = Gdx.app.getPreferences("My Preferences");
 
 //        prefs.putString("PlayerName", screen.getPlayerName());
         // Get player name
-        String playerName = game.prefs.getString("PlayerName");
-        nextGame.getPlayer().currentHealth = game.prefs.getFloat("PlayerHealth", 1);
+        String playerName = game.prefs.getString("PlayerName", "Player");
+        nextGame.getPlayer().currentHealth = game.prefs.getFloat("PlayerHealth");
         //nextGame.getPlayer().x = game.prefs.getFloat("Playerx");
         //nextGame.getPlayer().y = game.prefs.getFloat("Playery");
         nextGame.loot.score = game.prefs.getInteger("PlayerLoot");
         nextGame.points.score = game.prefs.getInteger("PlayerPoints");
+        College.capturedCount = game.prefs.getInteger("capturedCount");
+
+        for (int i = 0; i < nextGame.colleges.size; i++) {
+            if (nextGame.colleges.get(i).getCollegeName() == "Alcuin") {
+                nextGame.colleges.get(i).currentHealth = game.prefs.getFloat("AlcuinHealth");
+                nextGame.colleges.get(i).team = game.prefs.getString("AlcuinTeam");
+                nextGame.colleges.get(i).captured = game.prefs.getBoolean("AlcuinCaptured");
+            } else if (nextGame.colleges.get(i).getCollegeName() == "Derwent") {
+                nextGame.colleges.get(i).currentHealth = game.prefs.getFloat("DerwentHealth");
+                nextGame.colleges.get(i).team = game.prefs.getString("DerwentTeam");
+                nextGame.colleges.get(i).captured = game.prefs.getBoolean("DerwentCaptured");
+            } else if (nextGame.colleges.get(i).getCollegeName() == "Langwith") {
+                nextGame.colleges.get(i).currentHealth = game.prefs.getFloat("LangwithHealth");
+                nextGame.colleges.get(i).team = game.prefs.getString("LangwithTeam");
+                nextGame.colleges.get(i).captured = game.prefs.getBoolean("LangwithCaptured");
+            }
+        }
 
         nextGame.setPaused(false);
         nextGame.setPlayerName(playerName);

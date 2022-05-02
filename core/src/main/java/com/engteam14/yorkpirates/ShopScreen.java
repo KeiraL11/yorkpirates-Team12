@@ -25,13 +25,14 @@ public class ShopScreen extends ScreenAdapter {
 
     public boolean give_more_damage_bought;
     public boolean immunity_bought;
-    public boolean take_less_damage_bought;
+    public boolean take_more_damage_bought;
 
     /**
      * The shop, the user can buy power ups to use in the game.
-     * @param game          the base game
-     * @param screen        the main game screen.
-     * @param pauseScreen   the pause screen (used to get to the shop)
+     *
+     * @param game        the base game
+     * @param screen      the main game screen.
+     * @param pauseScreen the pause screen (used to get to the shop)
      */
     public ShopScreen(YorkPirates game, GameScreen screen, PauseScreen pauseScreen) {
         this.game = game;
@@ -50,7 +51,7 @@ public class ShopScreen extends ScreenAdapter {
         table.setFillParent(true);
         table.setTouchable(Touchable.enabled);
         table.setBackground(skin.getDrawable("Selection"));
-        if(YorkPirates.DEBUG_ON) table.setDebug(true);
+        if (YorkPirates.DEBUG_ON) table.setDebug(true);
 
         // Generate title texture
         Texture titleT = new Texture(Gdx.files.internal("loot.png"));
@@ -115,7 +116,7 @@ public class ShopScreen extends ScreenAdapter {
         lessDamageButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 if (screen.loot.Get() >= 15) {
-                    take_less_damage_bought = true;
+                    take_more_damage_bought = true;
                     screen.loot.Add(-15);
                     screen.getPlayer().takeMoreDamagePowerup();
                 }
@@ -153,32 +154,15 @@ public class ShopScreen extends ScreenAdapter {
 
     /**
      * Is called once every frame. Runs update() and then renders the title screen.
+     *
      * @param delta The time passed since the previously rendered frame.
      */
     @Override
-    public void render(float delta){
+    public void render(float delta) {
         Gdx.input.setInputProcessor(shopStage);
-        update();
         ScreenUtils.clear(0.6f, 0.6f, 1.0f, 1.0f);
         loot.setText(screen.loot.GetString());
         screen.render(delta);// Draws the gameplay screen as a background
         shopStage.draw(); // Draws the stage
-    }
-
-    /**
-     * Is called once every frame. Used for calculations that take place before rendering.
-     */
-    private void update(){
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
-            gameContinue();
-        }
-    }
-
-    /**
-     * Generates a HUD object within the game that controls elements of the UI.
-     */
-    private void gameContinue() {
-        screen.setPaused(false);
-        game.setScreen(screen);
     }
 }

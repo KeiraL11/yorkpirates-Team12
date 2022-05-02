@@ -19,6 +19,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import java.util.Objects;
+
 public class GameScreen extends ScreenAdapter {
     // Team name constants
     public static final String playerTeam = "PLAYER";
@@ -35,6 +37,7 @@ public class GameScreen extends ScreenAdapter {
     // Score managers
     public ScoreManager points;
     public ScoreManager loot;
+
 
     //PowerUps
     public Array<PowerUps> powerups;
@@ -487,6 +490,7 @@ public class GameScreen extends ScreenAdapter {
      * @param win   The boolean determining the win state of the game.
      */
     public void gameEnd(boolean win){
+        game.prefs.clear();
         game.setScreen(new EndScreen(game, this, win));
     }
 

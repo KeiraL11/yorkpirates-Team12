@@ -32,7 +32,7 @@ public class Player extends GameObject {
     // Movement calculation values
     private int previousDirectionX;
     private int previousDirectionY;
-    private float distance;
+    public float distance;
     private long lastMovementScore;
 
     private HealthBar playerHealth;

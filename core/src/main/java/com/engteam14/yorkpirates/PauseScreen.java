@@ -166,7 +166,7 @@ public class PauseScreen extends ScreenAdapter {
             screen.getPlayer().damageIncrease();
         }
 
-        if (shopScreen.take_less_damage_bought) {
+        if (shopScreen.take_more_damage_bought) {
             screen.getPlayer().takeMoreDamagePowerup();
         }
         screen.setPaused(false);
@@ -181,7 +181,9 @@ public class PauseScreen extends ScreenAdapter {
         game.prefs.putFloat("Playery", screen.getPlayer().y);
         game.prefs.putInteger("PlayerLoot", screen.loot.Get());
         game.prefs.putInteger("PlayerPoints", screen.points.Get());
+        game.prefs.putFloat("PlayerDistance", screen.getPlayer().getDistance());
         game.prefs.putInteger("capturedCount", College.capturedCount);
+        game.prefs.putString("Difficulty", screen.getPlayer().getDifficulty());
 
         for (int i = 0; i < screen.colleges.size; i++) {
             game.prefs.putFloat(screen.colleges.get(i).getCollegeName() + "Health", screen.colleges.get(i).currentHealth);

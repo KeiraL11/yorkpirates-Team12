@@ -13,6 +13,8 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import java.util.Objects;
+
 public class TitleScreen extends ScreenAdapter {
     private final YorkPirates game;
     private final GameScreen nextGame;
@@ -204,18 +206,15 @@ public class TitleScreen extends ScreenAdapter {
         gameStart();
     }
 
-    private void loadGame() throws Exception {
-
-        //Preferences prefs = Gdx.app.getPreferences("My Preferences");
-
-//        prefs.putString("PlayerName", screen.getPlayerName());
+    private void loadGame(){
         // Get player name
         String playerName = game.prefs.getString("PlayerName", "Player");
         nextGame.getPlayer().currentHealth = game.prefs.getFloat("PlayerHealth");
-        //nextGame.getPlayer().x = game.prefs.getFloat("Playerx");
-        //nextGame.getPlayer().y = game.prefs.getFloat("Playery");
+        nextGame.getPlayer().x = game.prefs.getFloat("Playerx");
+        nextGame.getPlayer().y = game.prefs.getFloat("Playery");
         nextGame.loot.score = game.prefs.getInteger("PlayerLoot");
         nextGame.points.score = game.prefs.getInteger("PlayerPoints");
+        nextGame.getPlayer().distance = game.prefs.getFloat("PlayerDistance");
         College.capturedCount = game.prefs.getInteger("capturedCount");
 
         for (int i = 0; i < nextGame.colleges.size; i++) {
@@ -232,6 +231,14 @@ public class TitleScreen extends ScreenAdapter {
                 nextGame.colleges.get(i).team = game.prefs.getString("LangwithTeam");
                 nextGame.colleges.get(i).captured = game.prefs.getBoolean("LangwithCaptured");
             }
+        }
+
+        if (Objects.equals(game.prefs.getString("Difficulty"), "Easy")) {
+            setEasy();
+        } else if (Objects.equals(game.prefs.getString("Difficulty"), "Normal")) {
+            setNormal();
+        } else if (Objects.equals(game.prefs.getString("Difficulty"), "Hard")) {
+            setHard();
         }
 
         nextGame.setPaused(false);

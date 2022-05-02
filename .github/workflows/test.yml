@@ -45,7 +45,7 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         enable_jekyll: true
-        github_token: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+        deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         external_repository: KeiraL11/Team12Website
         publish_branch: main
         publish_dir: ./core/build/reports

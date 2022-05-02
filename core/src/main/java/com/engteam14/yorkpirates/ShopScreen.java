@@ -63,8 +63,8 @@ public class ShopScreen extends ScreenAdapter {
         Image coin2 = new Image(titleT);
         Image coin3 = new Image(titleT);
 
-        Label coin1L = new Label("15", skin);
-        Label coin2L = new Label("15", skin);
+        Label coin1L = new Label("20", skin);
+        Label coin2L = new Label("60", skin);
         Label coin3L = new Label("15", skin);
 
         // Generate powerup textures
@@ -91,9 +91,9 @@ public class ShopScreen extends ScreenAdapter {
         TextButton damageButton = new TextButton("Give More Damage", skin);
         damageButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                if (screen.loot.Get() >= 15) {
+                if (screen.loot.Get() >= 20) {
                     give_more_damage_bought = true;
-                    screen.loot.Add(-15);
+                    screen.loot.Add(-20);
                     screen.getPlayer().damageIncrease();
                 }
             }
@@ -102,9 +102,9 @@ public class ShopScreen extends ScreenAdapter {
         TextButton immunityButton = new TextButton("Immunity", skin);
         immunityButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                if (screen.loot.Get() >= 15) {
+                if (screen.loot.Get() >= 60) {
                     immunity_bought = true;
-                    screen.loot.Add(-15);
+                    screen.loot.Add(-60);
                     screen.getPlayer().immunityPowerup();
                 }
 

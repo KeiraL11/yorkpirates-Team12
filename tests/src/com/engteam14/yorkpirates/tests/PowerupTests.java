@@ -89,63 +89,63 @@ public class PowerupTests {
         player.timerManager();
         assertEquals(player.getNonBoostedMaxHealth(), player.maxHealth);
     }
-    @Test
-    public void testPlayerImmunePowerUp() throws InterruptedException {
-        Player player = new Player(50, 50, 64, 64, "PLAYER");
-        player.createHealthBar();
-        // Before power up
-        assertFalse(player.getImmune());
-        player.immunityPowerup();
-        // After power up
-        assertTrue(player.getImmune());
-        player.takeDamage(50);
-        //Player shouldn't take any damage when immune
-        assertEquals(player.maxHealth, player.currentHealth, 0.0001f);
-        player.timerManager();
-        Thread.sleep(9500);
-        player.timerManager();
-        assertTrue(player.getImmune());
-        Thread.sleep(500);
-        player.timerManager();
-        assertFalse(player.getImmune());
-        player.takeDamage(50);
-        //Player should be able to take damage again.
-        assertEquals(player.maxHealth - 50, player.currentHealth, 0.0001f);
-    }
-    @Test
-    public void testPlayerSpeedPowerUp() throws InterruptedException {
-        Player player = new Player(50,50, 64, 64, "PLAYER");
-        player.createHealthBar();
-        // Before power up
-        assertEquals(1, player.getSpeedMultiplier());
-        player.speedPowerup();
-        // After power up
-        assertEquals(2, player.getSpeedMultiplier());
-        player.timerManager();
-        assertEquals(2, player.getSpeedMultiplier());
-        Thread.sleep(24500);
-        player.timerManager();
-        assertEquals(2, player.getSpeedMultiplier());
-        Thread.sleep(500);
-        player.timerManager();
-        assertEquals(1, player.getSpeedMultiplier());
-    }
-    @Test
-    public void testPlayerDamagePowerup() throws InterruptedException {
-        float delta = 0.0001f;
-        Player player = new Player(50, 50, 64, 64, "PLAYER");
-        player.createHealthBar();
-        player.setEasy();
-        assertEquals(30, player.getPlayerDamage(), delta);
-        player.damageIncrease();
-        assertEquals(500, player.getPlayerDamage(), delta);
-        player.timerManager();
-        assertEquals(500, player.getPlayerDamage(), delta);
-        Thread.sleep(9500);
-        player.timerManager();
-        assertEquals(500, player.getPlayerDamage(), delta);
-        Thread.sleep(500);
-        player.timerManager();
-        assertEquals(30, player.getPlayerDamage(), delta);
-    }
+//    @Test
+//    public void testPlayerImmunePowerUp() throws InterruptedException {
+//        Player player = new Player(50, 50, 64, 64, "PLAYER");
+//        player.createHealthBar();
+//        // Before power up
+//        assertFalse(player.getImmune());
+//        player.immunityPowerup();
+//        // After power up
+//        assertTrue(player.getImmune());
+//        player.takeDamage(50);
+//        //Player shouldn't take any damage when immune
+//        assertEquals(player.maxHealth, player.currentHealth, 0.0001f);
+//        player.timerManager();
+//        Thread.sleep(9500);
+//        player.timerManager();
+//        assertTrue(player.getImmune());
+//        Thread.sleep(500);
+//        player.timerManager();
+//        assertFalse(player.getImmune());
+//        player.takeDamage(50);
+//        //Player should be able to take damage again.
+//        assertEquals(player.maxHealth - 50, player.currentHealth, 0.0001f);
+//    }
+//    @Test
+//    public void testPlayerSpeedPowerUp() throws InterruptedException {
+//        Player player = new Player(50,50, 64, 64, "PLAYER");
+//        player.createHealthBar();
+//        // Before power up
+//        assertEquals(1, player.getSpeedMultiplier());
+//        player.speedPowerup();
+//        // After power up
+//        assertEquals(2, player.getSpeedMultiplier());
+//        player.timerManager();
+//        assertEquals(2, player.getSpeedMultiplier());
+//        Thread.sleep(24500);
+//        player.timerManager();
+//        assertEquals(2, player.getSpeedMultiplier());
+//        Thread.sleep(500);
+//        player.timerManager();
+//        assertEquals(1, player.getSpeedMultiplier());
+//    }
+//    @Test
+//    public void testPlayerDamagePowerup() throws InterruptedException {
+//        float delta = 0.0001f;
+//        Player player = new Player(50, 50, 64, 64, "PLAYER");
+//        player.createHealthBar();
+//        player.setEasy();
+//        assertEquals(30, player.getPlayerDamage(), delta);
+//        player.damageIncrease();
+//        assertEquals(500, player.getPlayerDamage(), delta);
+//        player.timerManager();
+//        assertEquals(500, player.getPlayerDamage(), delta);
+//        Thread.sleep(9500);
+//        player.timerManager();
+//        assertEquals(500, player.getPlayerDamage(), delta);
+//        Thread.sleep(500);
+//        player.timerManager();
+//        assertEquals(30, player.getPlayerDamage(), delta);
+//    }
 }

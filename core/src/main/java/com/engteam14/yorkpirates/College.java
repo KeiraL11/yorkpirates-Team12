@@ -265,7 +265,7 @@ public class College extends GameObject {
         //boats.add(new GameObject(boatTexture, 0, this.x+x, this.y+y, 25, 12, team));
         boatRotations.add(rotation);
     }
-
+    // Get college name
     public String getCollegeName() {
         return collegeName;
     }

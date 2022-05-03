@@ -37,6 +37,7 @@ jobs:
     - name: Deploy jar file to website
       uses: peaceiris/actions-gh-pages@v3
       with:
+        enable_kekyll: true
         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         external_repository: keiraL11/Team12Website
         publish_branch: main

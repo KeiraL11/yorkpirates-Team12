@@ -50,13 +50,3 @@ jobs:
         publish_branch: main
         publish_dir: ./core/build/reports/tests
         destination_dir: testreports
-        
-    - name: Deploy Test Coverage to Website
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        enable_jekyll: true
-        deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-        external_repository: KeiraL11/Team12Website
-        publish_branch: main
-        publish_dir: ./core/build/reports/jacoco
-        destination_dir: testreports

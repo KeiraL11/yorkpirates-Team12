@@ -48,5 +48,5 @@ jobs:
         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         external_repository: KeiraL11/Team12Website
         publish_branch: main
-        publish_dir: ./core/build/reports/tests
+        publish_dir: ./core/build/reports
         destination_dir: testreports

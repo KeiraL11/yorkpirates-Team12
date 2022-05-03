@@ -1,7 +1,6 @@
 package com.engteam14.yorkpirates.tests;
 
 import com.badlogic.gdx.Gdx;
-import com.engteam14.yorkpirates.tests.GdxTestRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.assertTrue;

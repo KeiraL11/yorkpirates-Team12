@@ -49,4 +49,4 @@ jobs:
         external_repository: KeiraL11/Team12Website
         publish_branch: main
         publish_dir: ./core/build/reports
-        destination_dir: testreports       
+        destination_dir: testreports

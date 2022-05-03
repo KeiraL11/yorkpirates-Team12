@@ -41,7 +41,7 @@ jobs:
         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         external_repository: keiraL11/Team12Website
         publish_branch: main
-        publish_dir: ./desktop/build/libs
+        publish_dir: ./lwjgl3/build/libs
         destination_dir: jar     
     - uses: actions/upload-artifact@v3
       with:

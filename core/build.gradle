@@ -13,3 +13,5 @@ dependencies {
 	api "com.github.tommyettinger:libgdx-utils-box2d:$utilsBox2dVersion"
 	api "com.github.tommyettinger:libgdx-utils:$utilsVersion"
 }
+
+

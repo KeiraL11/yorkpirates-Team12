@@ -33,15 +33,9 @@ jobs:
     - name: Run Unit Tests
       uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
       with:
-        arguments: test
-    - name: Publish Unit Test Results
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: Unit Test Report
-        path: '**/build/test-results/test/TEST-*.xml'
-        
+        arguments: test        
     - name: Deploy Test Reports to Website
+      if: always()
       uses: peaceiris/actions-gh-pages@v3
       with:
         enable_jekyll: true

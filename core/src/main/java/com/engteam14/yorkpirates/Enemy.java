@@ -100,7 +100,7 @@ public class Enemy extends GameObject {
         //Shoot the player is they are close
         if (nearPlayer){
             if (!Objects.equals(team, GameScreen.playerTeam)){
-                int shootFrequency = 200;
+                int shootFrequency = 400;
                 if (TimeUtils.timeSinceMillis(lastShotFired) > shootFrequency){
                     lastShotFired = TimeUtils.millis();
                     Projectile newProjectile = new Projectile(this, playerX, playerY, team);

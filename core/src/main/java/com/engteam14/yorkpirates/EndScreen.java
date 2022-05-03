@@ -67,7 +67,11 @@ public class EndScreen extends ScreenAdapter {
 
         restartB.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                screen.gameReset();
+                try {
+                    screen.gameReset();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 
@@ -96,13 +100,17 @@ public class EndScreen extends ScreenAdapter {
         endStage.addActor(table);
     }
 
-    /**1
+    /**
      * Is called once every frame. Runs update() and then renders the title screen.
      * @param delta The time passed since the previously rendered frame.
      */
     @Override
     public void render(float delta){
-        update();
+        try {
+            update();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         ScreenUtils.clear(0.1f, 0.6f, 0.6f, 1.0f);
         screen.render(delta); // Draws the gameplay screen as a background
         endStage.draw(); // Draws the stage
@@ -111,7 +119,7 @@ public class EndScreen extends ScreenAdapter {
     /**
      * Is called once every frame. Used for calculations that take place before rendering / inputs.
      */
-    private void update(){
+    private void update() throws Exception {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
             game.setScreen(new TitleScreen(game));
         }

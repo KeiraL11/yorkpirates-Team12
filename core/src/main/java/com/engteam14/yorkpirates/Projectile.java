@@ -1,8 +1,6 @@
 package com.engteam14.yorkpirates;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.Gdx;
 
 import java.util.Objects;
 
@@ -22,22 +20,20 @@ public class Projectile extends GameObject{
 
     /**
      * Generates a projectile object within the game with animated frame(s) and a hit-box.
-     * @param frames    The animation frames, or a single sprite.
-     * @param fps       The number of frames to be displayed per second.
      * @param origin    The object which the projectile originates from.
      * @param goal_x    The x coordinate within the map the object is moving towards.
      * @param goal_y    The y coordinate within the map the object is moving towards.
      * @param team      The team of the projectile.
      */
-    public Projectile(Array<Texture> frames, float fps, GameObject origin, float goal_x, float goal_y, String team) {
-        super(frames, fps, origin.x, origin.y, 5f,5f,team);
+    public Projectile(GameObject origin, float goal_x, float goal_y, String team) {
+        super(origin.x, origin.y, 5f,5f,team);
         this.origin = origin;
 
         // Speed calculations
         if(Objects.equals(team, GameScreen.playerTeam)){
             projectileSpeed = 150f;
         }else{
-            projectileSpeed = 50f;
+            projectileSpeed = 100f;
         }
 
         // Movement calculations
@@ -56,19 +52,27 @@ public class Projectile extends GameObject{
      * Called once per frame. Used to perform calculations such as projectile movement and collision detection.
      * @param screen    The main game screen.
      */
-    public void update(GameScreen screen){
+    public void update(GameScreen screen) throws Exception {
         // Movement Calculations
         float xMove = projectileSpeed*dx;
         float yMove = projectileSpeed*dy;
         distanceTravelled += projectileSpeed;
-        move(xMove, yMove);
+        move(xMove, yMove, Gdx.graphics.getDeltaTime());
 
         // Hit calculations
         if(origin == screen.getPlayer()){
             for(int i = 0; i < screen.colleges.size; i++) {
                 if (overlaps(screen.colleges.get(i).hitBox)){
                     if(!Objects.equals(team, screen.colleges.get(i).team)){ // Checks if projectile and college are on the same time
-                        screen.colleges.get(i).takeDamage(screen,projectileDamage,team);
+                        screen.colleges.get(i).takeDamage(screen.getPlayer().getPlayerDamage());
+                    }
+                    destroy(screen);
+                }
+            }
+            for(int i = 0; i < screen.enemies.size; i++) {
+                if (overlaps(screen.enemies.get(i).hitBox)){
+                    if(!Objects.equals(team, screen.enemies.get(i).team)){ // Checks if projectile and college are on the same time
+                        screen.enemies.get(i).takeDamage(screen.getPlayer().getPlayerDamage());
                     }
                     destroy(screen);
                 }
@@ -76,7 +80,7 @@ public class Projectile extends GameObject{
         }else{
             if (overlaps(screen.getPlayer().hitBox)){
                 if(!Objects.equals(team, GameScreen.playerTeam)){ // Checks if projectile and player are on the same time
-                    screen.getPlayer().takeDamage(screen,projectileDamage,team);
+                    screen.getPlayer().takeDamage(projectileDamage);
                 }
                 destroy(screen);
             }

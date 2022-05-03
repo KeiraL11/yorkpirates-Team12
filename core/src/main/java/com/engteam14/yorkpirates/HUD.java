@@ -40,7 +40,6 @@ public class HUD {
 
     private final int DISTANCE_REWARD = MathUtils.random(17,23);
     private final int POINT_REWARD = MathUtils.random(13,17);
-
     /**
      * Generates a HUD object within the game that controls elements of the UI.
      * @param screen    The game screen which this is attached to.
@@ -96,6 +95,7 @@ public class HUD {
         collegesTask.setDisabled(true);
         movementTask.setDisabled(true);
         pointsTask.setDisabled(true);
+
 
         // Create player tracker
         Table tracker = new Table();
@@ -201,11 +201,22 @@ public class HUD {
         if(screen.points.Get() > POINT_GOAL && pointsTask.isChecked()) { screen.loot.Add(POINT_REWARD); }
         pointsTask.setChecked(screen.points.Get() < POINT_GOAL);
         pointsTask.setText("Get "+POINT_GOAL+" points:  "+Math.min(screen.points.Get(), POINT_GOAL)+"/"+POINT_GOAL+"  ");
+
     }
 
+    /**
+     * Changes the name of the player
+     * @param screen    the main game screen
+     */
     public void updateName(GameScreen screen) { tasksTitle.setText(screen.getPlayerName() +"'s Tasks:"); }
 
+    /**
+     * Removes the tutorial overlay
+     */
     public void endTutorial() { tutorialComplete = true; }
 
+    /**
+     * Ends the game.
+     */
     public void setGameEndable() {canEndGame = true; }
 }

@@ -13,11 +13,12 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import java.util.Objects;
+
 public class TitleScreen extends ScreenAdapter {
     private final YorkPirates game;
     private final GameScreen nextGame;
     private final Stage stage;
-//    private final GameScreen screen;
 
     private final TextField textBox;
     private final Cell<Image> titleCell;
@@ -28,9 +29,8 @@ public class TitleScreen extends ScreenAdapter {
      * Initialises the title screen, as well as relevant textures and data it may contain.
      * @param game  Passes in the base game class for reference.
      */
-    public TitleScreen(YorkPirates game){
+    public TitleScreen(YorkPirates game) throws Exception {
         this.game = game;
-//        this.screen = screen;
 
         // Generates main gameplay for use as background
         nextGame = new GameScreen(game);
@@ -66,18 +66,34 @@ public class TitleScreen extends ScreenAdapter {
             }});
 
         // Generate buttons
-        ImageTextButton startButton = new ImageTextButton("Start a New Game", skin);
-        ImageTextButton loadButton = new ImageTextButton("Load", skin);
+        ImageTextButton loadButton = new ImageTextButton("Load Game Save", skin);
+        ImageTextButton easyButton = new ImageTextButton("Easy", skin);
+        ImageTextButton normalButton = new ImageTextButton("Normal", skin);
+        ImageTextButton hardButton = new ImageTextButton("Hard", skin);
         ImageTextButton quitButton = new ImageTextButton("Exit Game", skin, "Quit");
 
-        startButton.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                gameStart();
-            }
-        });
         loadButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                loadGame();
+                try {
+                    loadGame();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        easyButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                setEasy();
+            }
+        });
+        normalButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                setNormal();
+            }
+        });
+        hardButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                setHard();
             }
         });
         quitButton.addListener(new ClickListener() {
@@ -100,9 +116,13 @@ public class TitleScreen extends ScreenAdapter {
 
         // Add buttons to table
         table.row();
-        table.add(startButton).expand();
-        table.row();
         table.add(loadButton).expand();
+        table.row();
+        table.add(easyButton).expand();
+        table.row();
+        table.add(normalButton).expand();
+        table.row();
+        table.add(hardButton).expand();
         table.row();
         table.add(quitButton).expand();
 
@@ -139,6 +159,7 @@ public class TitleScreen extends ScreenAdapter {
      */
     private void update(){
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)){
+            nextGame.setNormal();
             gameStart();
         }
     }
@@ -160,14 +181,65 @@ public class TitleScreen extends ScreenAdapter {
         nextGame.setPlayerName(playerName);
         game.setScreen(nextGame);
     }
+
+    /**
+     * Set the game mode to easy
+     */
+    private void setEasy(){
+        nextGame.setEasy();
+        gameStart();
+    }
+
+    /**
+     * Set the game mode to normal
+     */
+    private void setNormal(){
+        nextGame.setNormal();
+        gameStart();
+    }
+
+    /**
+     * Set the game mode to hard.
+     */
+    private void setHard(){
+        nextGame.setHard();
+        gameStart();
+    }
+
     private void loadGame(){
-
-        Preferences prefs = Gdx.app.getPreferences("My Preferences");
-
-//        prefs.putString("PlayerName", screen.getPlayerName());
         // Get player name
-        String playerName = prefs.getString("PlayerName", "Player1");
-//        screen.getPlayer().currentHealth = prefs.getFloat("PlayerHealth", 1);
+        String playerName = game.prefs.getString("PlayerName", "Player");
+        nextGame.getPlayer().currentHealth = game.prefs.getFloat("PlayerHealth");
+        nextGame.getPlayer().x = game.prefs.getFloat("Playerx");
+        nextGame.getPlayer().y = game.prefs.getFloat("Playery");
+        nextGame.loot.score = game.prefs.getInteger("PlayerLoot");
+        nextGame.points.score = game.prefs.getInteger("PlayerPoints");
+        nextGame.getPlayer().distance = game.prefs.getFloat("PlayerDistance");
+        College.capturedCount = game.prefs.getInteger("capturedCount");
+
+        for (int i = 0; i < nextGame.colleges.size; i++) {
+            if (nextGame.colleges.get(i).getCollegeName() == "Alcuin") {
+                nextGame.colleges.get(i).currentHealth = game.prefs.getFloat("AlcuinHealth");
+                nextGame.colleges.get(i).team = game.prefs.getString("AlcuinTeam");
+                nextGame.colleges.get(i).captured = game.prefs.getBoolean("AlcuinCaptured");
+            } else if (nextGame.colleges.get(i).getCollegeName() == "Derwent") {
+                nextGame.colleges.get(i).currentHealth = game.prefs.getFloat("DerwentHealth");
+                nextGame.colleges.get(i).team = game.prefs.getString("DerwentTeam");
+                nextGame.colleges.get(i).captured = game.prefs.getBoolean("DerwentCaptured");
+            } else if (nextGame.colleges.get(i).getCollegeName() == "Langwith") {
+                nextGame.colleges.get(i).currentHealth = game.prefs.getFloat("LangwithHealth");
+                nextGame.colleges.get(i).team = game.prefs.getString("LangwithTeam");
+                nextGame.colleges.get(i).captured = game.prefs.getBoolean("LangwithCaptured");
+            }
+        }
+
+        if (Objects.equals(game.prefs.getString("Difficulty"), "Easy")) {
+            setEasy();
+        } else if (Objects.equals(game.prefs.getString("Difficulty"), "Normal")) {
+            setNormal();
+        } else if (Objects.equals(game.prefs.getString("Difficulty"), "Hard")) {
+            setHard();
+        }
 
         nextGame.setPaused(false);
         nextGame.setPlayerName(playerName);

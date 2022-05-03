@@ -1,10 +1,10 @@
 package com.engteam14.yorkpirates;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-import static java.lang.Math.*;
+
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
 
 public class Indicator extends GameObject{
 
@@ -14,8 +14,15 @@ public class Indicator extends GameObject{
     private Vector2 gradient;
     private boolean visible;
 
-    public Indicator(College college, Player player, Array<Texture> frames) {
-        super(frames, 0, player.x, player.y, frames.get(0).getWidth()/50f, frames.get(0).getHeight()/50f, college.team);
+    /**
+     * Arrow which points to the college locations, green for ally colleges, red for enemy colleges.
+     * @param college   The college that the indicator is associated with.
+     * @param player    player, so that the arrows can change gradient and location, with the player.
+     * @param width     width of the arrow.
+     * @param height    height of the arrow.
+     */
+    public Indicator(College college, Player player, float width, float height) {
+        super(player.x, player.y, width, height, college.team);
 
         this.player = player;
         this.college = college;

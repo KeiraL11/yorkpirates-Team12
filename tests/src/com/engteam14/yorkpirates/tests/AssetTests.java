@@ -1,11 +1,12 @@
-package com.engteam14.yorkpirates.test;
+package com.engteam14.yorkpirates.tests;
 
 import com.badlogic.gdx.Gdx;
+import com.engteam14.yorkpirates.tests.GdxTestRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(com.engteam14.yorkpirates.test.GdxTestRunner.class)
+@RunWith(GdxTestRunner.class)
 public class AssetTests {
 
     @Test

@@ -2,6 +2,7 @@ package com.engteam14.yorkpirates;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -11,6 +12,8 @@ import com.badlogic.gdx.utils.Array;
 public class YorkPirates extends Game {
 
 	// Global values
+	public Preferences prefs;
+	//prefs = Gdx.app.getPreferences("My Preferences");
 	public BitmapFont font;
 	public SpriteBatch batch;
 	public OrthographicCamera camera;
@@ -24,13 +27,15 @@ public class YorkPirates extends Game {
 
 	// Constants
 	public static final boolean DEBUG_ON = false; // Determines if the game runs in DEBUG mode.
-	private static final int SCREEN_TO_PIXEL_RATIO = 16; // Determines the pixel ratio of the game.
+	private static final int SCREEN_TO_PIXEL_RATIO = 64; // Determines the pixel ratio of the game.
 
 	/**
 	 * Initialises base game class.
 	 */
 	@Override
 	public void create () {
+
+		prefs = Gdx.app.getPreferences("My Preferences");
 		// Graphics settings
 		Gdx.graphics.setForegroundFPS(30);
 		Gdx.graphics.setVSync(true);
@@ -66,7 +71,11 @@ public class YorkPirates extends Game {
 		}
 
 		// Sets the screen to the title screen
-		setScreen(new TitleScreen(this));
+		try {
+			setScreen(new TitleScreen(this));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**

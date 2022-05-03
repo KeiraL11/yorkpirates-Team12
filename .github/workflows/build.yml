@@ -34,6 +34,14 @@ jobs:
       uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
       with:
         arguments: build
+    - name: Deploy jar file to website
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        deploy_key: ${{ secrets.SITE_DEPLOY_KEY }}
+        external_repository: engteam14/website2
+        publish_branch: main
+        publish_dir: ./desktop/build/libs
+        destination_dir: jar     
     - uses: actions/upload-artifact@v3
       with:
         name: Package

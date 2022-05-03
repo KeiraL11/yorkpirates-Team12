@@ -67,15 +67,17 @@ public class TitleScreen extends ScreenAdapter {
 
         // Generate buttons
         ImageTextButton loadButton = new ImageTextButton("Load Game Save", skin);
-        ImageTextButton easyButton = new ImageTextButton("Easy", skin);
-        ImageTextButton normalButton = new ImageTextButton("Normal", skin);
-        ImageTextButton hardButton = new ImageTextButton("Hard", skin);
+        ImageTextButton easyButton = new ImageTextButton("New Game - Easy", skin);
+        ImageTextButton normalButton = new ImageTextButton("New Game - Normal", skin);
+        ImageTextButton hardButton = new ImageTextButton("New Game - Hard", skin);
         ImageTextButton quitButton = new ImageTextButton("Exit Game", skin, "Quit");
 
         loadButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 try {
-                    loadGame();
+                    if (game.prefs.contains("PlayerName")) {
+                        loadGame();
+                    }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -208,7 +210,7 @@ public class TitleScreen extends ScreenAdapter {
 
     private void loadGame(){
         // Get player name
-        String playerName = game.prefs.getString("PlayerName", "Player");
+        String playerName = game.prefs.getString("PlayerName");
         nextGame.getPlayer().currentHealth = game.prefs.getFloat("PlayerHealth");
         nextGame.getPlayer().x = game.prefs.getFloat("Playerx");
         nextGame.getPlayer().y = game.prefs.getFloat("Playery");

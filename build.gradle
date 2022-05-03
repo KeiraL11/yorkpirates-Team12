@@ -94,8 +94,8 @@ project(":core") {
 	test {
 		useJUnit()
 		maxHeapSize = '1G'
-		ignoreFailures(true);
-		finalizedBy jacocoTestReport // report is always generated after tests run
+		ignoreFailures(true); // build is still successful even is some tests fail
+		finalizedBy jacocoTestReport // test coverage report is always generated after tests run
 	}
 
 	jacocoTestReport {

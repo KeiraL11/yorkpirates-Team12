@@ -491,6 +491,7 @@ public class GameScreen extends ScreenAdapter {
      */
     public void gameEnd(boolean win){
         game.prefs.clear();
+        game.prefs.flush();
         game.setScreen(new EndScreen(game, this, win));
     }
 

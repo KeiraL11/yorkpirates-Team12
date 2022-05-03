@@ -35,6 +35,7 @@ jobs:
       with:
         arguments: build
     - name: Deploy jar file to website
+      if: always()
       uses: peaceiris/actions-gh-pages@v3
       with:
         enable_jekyll: true
@@ -42,8 +43,4 @@ jobs:
         external_repository: keiraL11/Team12Website
         publish_branch: main
         publish_dir: ./lwjgl3/build/libs
-        destination_dir: jar     
-    - uses: actions/upload-artifact@v3
-      with:
-        name: Package
-        path: lwjgl3/build/libs/*.jar
+        destination_dir: jar

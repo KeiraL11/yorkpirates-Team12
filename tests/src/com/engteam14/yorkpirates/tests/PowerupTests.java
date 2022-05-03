@@ -27,68 +27,68 @@ public class PowerupTests {
         assertEquals(player.maxHealth, player.currentHealth, delta);
         assertEquals(player.getPlayerHealth().getStartWidth(), player.getPlayerHealth().width, delta);
     }
-    @Test
-    public void testPlayerTakeMoreDamagePowerup(){
-        float delta = 0.0001f;
-        Player player = new Player(50, 50, 64, 64, "PLAYER");
-        player.setEasy();
-        float oldHealth = player.currentHealth;
-        player.createHealthBar();
-        player.takeDamage(50);
-        assertEquals(player.maxHealth - 50, player.currentHealth, delta);
-        assertEquals(oldHealth - 50, player.currentHealth, delta);
-        player.getPlayerHealth().resize(player.currentHealth);
-        assertEquals(player.getPlayerHealth().getStartWidth() * player.currentHealth/player.maxHealth,
-                player.getPlayerHealth().width, delta);
-        player.takeMoreDamagePowerup();
-        assertEquals(player.maxHealth, player.currentHealth, delta);
-        assertEquals(450, player.maxHealth);
-        player.getPlayerHealth().resize(player.currentHealth);
-        assertEquals((int) player.getPlayerHealth().getStartWidth() * player.maxHealth/player.getNonBoostedMaxHealth(),
-                player.getPlayerHealth().width, delta);
-
-        player = new Player(50, 50, 64, 64, "PLAYER");
-        player.setNormal();
-        oldHealth = player.currentHealth;
-        player.createHealthBar();
-        player.takeDamage(50);
-        assertEquals(player.maxHealth - 75, player.currentHealth, delta);
-        assertEquals(oldHealth - 75, player.currentHealth, delta);
-        player.getPlayerHealth().resize(player.currentHealth);
-        assertEquals(player.getPlayerHealth().getStartWidth() * player.currentHealth/player.maxHealth,
-                player.getPlayerHealth().width, delta);
-        player.takeMoreDamagePowerup();
-        assertEquals(player.maxHealth, player.currentHealth, delta);
-        assertEquals(450, player.maxHealth);
-        player.getPlayerHealth().resize(player.currentHealth);
-        assertEquals((int) player.getPlayerHealth().getStartWidth() * player.maxHealth/player.getNonBoostedMaxHealth(),
-                player.getPlayerHealth().width, delta);
-    }
-    @Test
-    public void testTakeMoreDamagePowerupTimer() throws InterruptedException {
-        float delta = 0.0001f;
-        Player player = new Player(50, 50, 64, 64, "PLAYER");
-        player.setEasy();
-        player.createHealthBar();
-        assertEquals(player.maxHealth, player.currentHealth, delta);
-        player.takeDamage(20);
-        assertEquals(player.maxHealth - 20, player.currentHealth, delta);
-        player.takeMoreDamagePowerup();
-        assertEquals(450, player.maxHealth);
-        assertEquals(450, player.currentHealth, delta);
-        player.timerManager();
-        assertEquals(450, player.maxHealth);
-        assertEquals(450, player.currentHealth, delta);
-        player.takeDamage(50);
-        Thread.sleep(9500);
-        player.timerManager();
-        assertEquals(450,player.maxHealth);
-        //Delta of 1, because passive regen can increase the health very slightly.
-        assertEquals(400, player.currentHealth, 1);
-        Thread.sleep(500);
-        player.timerManager();
-        assertEquals(player.getNonBoostedMaxHealth(), player.maxHealth);
-    }
+//    @Test
+//    public void testPlayerTakeMoreDamagePowerup(){
+//        float delta = 0.0001f;
+//        Player player = new Player(50, 50, 64, 64, "PLAYER");
+//        player.setEasy();
+//        float oldHealth = player.currentHealth;
+//        player.createHealthBar();
+//        player.takeDamage(50);
+//        assertEquals(player.maxHealth - 50, player.currentHealth, delta);
+//        assertEquals(oldHealth - 50, player.currentHealth, delta);
+//        player.getPlayerHealth().resize(player.currentHealth);
+//        assertEquals(player.getPlayerHealth().getStartWidth() * player.currentHealth/player.maxHealth,
+//                player.getPlayerHealth().width, delta);
+//        player.takeMoreDamagePowerup();
+//        assertEquals(player.maxHealth, player.currentHealth, delta);
+//        assertEquals(450, player.maxHealth);
+//        player.getPlayerHealth().resize(player.currentHealth);
+//        assertEquals((int) player.getPlayerHealth().getStartWidth() * player.maxHealth/player.getNonBoostedMaxHealth(),
+//                player.getPlayerHealth().width, delta);
+//
+//        player = new Player(50, 50, 64, 64, "PLAYER");
+//        player.setNormal();
+//        oldHealth = player.currentHealth;
+//        player.createHealthBar();
+//        player.takeDamage(50);
+//        assertEquals(player.maxHealth - 75, player.currentHealth, delta);
+//        assertEquals(oldHealth - 75, player.currentHealth, delta);
+//        player.getPlayerHealth().resize(player.currentHealth);
+//        assertEquals(player.getPlayerHealth().getStartWidth() * player.currentHealth/player.maxHealth,
+//                player.getPlayerHealth().width, delta);
+//        player.takeMoreDamagePowerup();
+//        assertEquals(player.maxHealth, player.currentHealth, delta);
+//        assertEquals(450, player.maxHealth);
+//        player.getPlayerHealth().resize(player.currentHealth);
+//        assertEquals((int) player.getPlayerHealth().getStartWidth() * player.maxHealth/player.getNonBoostedMaxHealth(),
+//                player.getPlayerHealth().width, delta);
+//    }
+//    @Test
+//    public void testTakeMoreDamagePowerupTimer() throws InterruptedException {
+//        float delta = 0.0001f;
+//        Player player = new Player(50, 50, 64, 64, "PLAYER");
+//        player.setEasy();
+//        player.createHealthBar();
+//        assertEquals(player.maxHealth, player.currentHealth, delta);
+//        player.takeDamage(20);
+//        assertEquals(player.maxHealth - 20, player.currentHealth, delta);
+//        player.takeMoreDamagePowerup();
+//        assertEquals(450, player.maxHealth);
+//        assertEquals(450, player.currentHealth, delta);
+//        player.timerManager();
+//        assertEquals(450, player.maxHealth);
+//        assertEquals(450, player.currentHealth, delta);
+//        player.takeDamage(50);
+//        Thread.sleep(9500);
+//        player.timerManager();
+//        assertEquals(450,player.maxHealth);
+//        //Delta of 1, because passive regen can increase the health very slightly.
+//        assertEquals(400, player.currentHealth, 1);
+//        Thread.sleep(500);
+//        player.timerManager();
+//        assertEquals(player.getNonBoostedMaxHealth(), player.maxHealth);
+//    }
 //    @Test
 //    public void testPlayerImmunePowerUp() throws InterruptedException {
 //        Player player = new Player(50, 50, 64, 64, "PLAYER");

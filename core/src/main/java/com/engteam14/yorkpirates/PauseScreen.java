@@ -63,6 +63,7 @@ public class PauseScreen extends ScreenAdapter {
             }
         });
 
+        // Left click will resume the game
         TextButton resume = new TextButton("Resume", skin);
         resume.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -70,6 +71,7 @@ public class PauseScreen extends ScreenAdapter {
             }
         });
 
+        // Left click will save & quit the game
         TextButton save = new TextButton("Save & Quit", skin);
         save.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -78,6 +80,7 @@ public class PauseScreen extends ScreenAdapter {
             }
         });
 
+        // Left click will restart the game
         TextButton restart = new TextButton("End Game", skin);
         restart.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -86,6 +89,7 @@ public class PauseScreen extends ScreenAdapter {
             }
         });
 
+        // Music
         TextButton music = new TextButton("", skin);
         if (screen.music.getVolume() == 0)  music.setText("Turn Music ON");
         else                                music.setText("Turn Music OFF");
@@ -102,6 +106,7 @@ public class PauseScreen extends ScreenAdapter {
             }
         });
 
+        // Quit
         TextButton quit = new TextButton("Quit", skin);
         quit.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -172,6 +177,10 @@ public class PauseScreen extends ScreenAdapter {
         screen.setPaused(false);
         game.setScreen(screen);
     }
+
+    /**
+     * Save the game with current status
+     */
     private void gameSave() {
         screen.setPaused(true);
 

@@ -184,6 +184,7 @@ public class PauseScreen extends ScreenAdapter {
     private void gameSave() {
         screen.setPaused(true);
 
+        // Save key info
         game.prefs.putString("PlayerName", screen.getPlayerName());
         game.prefs.putFloat("PlayerHealth", screen.getPlayer().currentHealth);
         game.prefs.putFloat("Playerx", screen.getPlayer().x);
@@ -200,6 +201,7 @@ public class PauseScreen extends ScreenAdapter {
             game.prefs.putBoolean(screen.colleges.get(i).getCollegeName() + "Captured", screen.colleges.get(i).captured);
         }
 
+        // Write info to memory
         game.prefs.flush();
     }
 }

@@ -24,11 +24,6 @@ buildscript {
 	}
 }
 
-//allprojects {
-//	apply plugin: 'eclipse'
-//	apply plugin: 'idea'
-//}
-
 allprojects {
 	apply plugin: "eclipse"
 
@@ -52,19 +47,6 @@ allprojects {
 		maven { url "https://oss.sonatype.org/content/repositories/releases/" }
 	}
 }
-
-/*project(":lwjgl3") {
-	apply plugin: "java-library"
-
-
-	dependencies {
-		implementation project(":core")
-		api "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-		api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-		api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
-
-	}
-}*/
 
 project(":core") {
 	apply plugin: "java-library"
@@ -100,48 +82,8 @@ project(":core") {
 
 	jacocoTestReport {
 	}
-}
 
-//project(":tests") {
-//	apply plugin: "java"
-//
-//	sourceSets.test.java.srcDirs = ["src/"]
-//
-//	dependencies {
-//
-//		/**
-//		 * If you do have some classes to test in os specific code you may want to uncomment
-//		 * some of these lines.
-//		 *
-//		 * BUT: I recommend to create seperate test sub projects for each platform. Trust me :)
-//		 *
-//		 */
-//
-////        compile project(":android")
-////        compile project(":html")
-////        compile project(":desktop")
-//
-//
-////        if(System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0) {
-////        	compile project(":ios")
-////        }
-//
-//		implementation project(":core")
-//
-//		implementation "junit:junit:4.+"
-//		implementation "org.mockito:mockito-all:1.9.+"
-//
-//		implementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
-//		implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
-//
-//		testImplementation 'junit:junit:4.+'
-//		testImplementation "org.mockito:mockito-all:1.9.+"
-//
-//		testImplementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
-//		testImplementation "com.badlogicgames.gdx:gdx:$gdxVersion"
-//		testImplementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-//	}
-//}
+}
 
 configure(subprojects) {
 	apply plugin: 'java-library'

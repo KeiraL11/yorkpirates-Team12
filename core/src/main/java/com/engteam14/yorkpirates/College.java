@@ -184,6 +184,11 @@ public class College extends GameObject {
         }
     }
 
+    /**
+     * Called when the college is captured
+     * @param screen        The main game screen
+     * @throws Exception    Inherited from changeImage
+     */
     public void capturedUpdate (GameScreen screen) throws Exception{
         // Change the health bar to green, change the indicator arrow to green.
         Array<Texture> healthBarSprite = new Array<>();

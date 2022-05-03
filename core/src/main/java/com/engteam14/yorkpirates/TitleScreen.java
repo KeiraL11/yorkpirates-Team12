@@ -208,8 +208,11 @@ public class TitleScreen extends ScreenAdapter {
         gameStart();
     }
 
+    /**
+     * Load previous game save
+     */
     private void loadGame(){
-        // Get player name
+        // Get player info
         String playerName = game.prefs.getString("PlayerName");
         nextGame.getPlayer().currentHealth = game.prefs.getFloat("PlayerHealth");
         nextGame.getPlayer().x = game.prefs.getFloat("Playerx");
@@ -217,8 +220,11 @@ public class TitleScreen extends ScreenAdapter {
         nextGame.loot.score = game.prefs.getInteger("PlayerLoot");
         nextGame.points.score = game.prefs.getInteger("PlayerPoints");
         nextGame.getPlayer().distance = game.prefs.getFloat("PlayerDistance");
+
+        // Get capturedCount value
         College.capturedCount = game.prefs.getInteger("capturedCount");
 
+        // Get colleges info
         for (int i = 0; i < nextGame.colleges.size; i++) {
             if (nextGame.colleges.get(i).getCollegeName() == "Alcuin") {
                 nextGame.colleges.get(i).currentHealth = game.prefs.getFloat("AlcuinHealth");
@@ -235,6 +241,7 @@ public class TitleScreen extends ScreenAdapter {
             }
         }
 
+        // Get difficulty mode
         if (Objects.equals(game.prefs.getString("Difficulty"), "Easy")) {
             setEasy();
         } else if (Objects.equals(game.prefs.getString("Difficulty"), "Normal")) {

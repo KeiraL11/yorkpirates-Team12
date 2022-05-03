@@ -68,6 +68,7 @@ allprojects {
 
 project(":core") {
 	apply plugin: "java-library"
+	apply plugin: "jacoco"
 
 	sourceSets.test.java.srcDirs = ["src/test/java/"]
 

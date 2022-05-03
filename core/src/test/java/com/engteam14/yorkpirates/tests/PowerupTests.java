@@ -130,22 +130,22 @@ public class PowerupTests {
 //        player.timerManager();
 //        assertEquals(1, player.getSpeedMultiplier());
 //    }
-//    @Test
-//    public void testPlayerDamagePowerup() throws InterruptedException {
-//        float delta = 0.0001f;
-//        Player player = new Player(50, 50, 64, 64, "PLAYER");
-//        player.createHealthBar();
-//        player.setEasy();
-//        assertEquals(30, player.getPlayerDamage(), delta);
-//        player.damageIncrease();
-//        assertEquals(500, player.getPlayerDamage(), delta);
-//        player.timerManager();
-//        assertEquals(500, player.getPlayerDamage(), delta);
-//        Thread.sleep(9500);
-//        player.timerManager();
-//        assertEquals(500, player.getPlayerDamage(), delta);
-//        Thread.sleep(500);
-//        player.timerManager();
-//        assertEquals(30, player.getPlayerDamage(), delta);
-//    }
+    @Test
+    public void testPlayerDamagePowerup() throws InterruptedException {
+        float delta = 0.0001f;
+        Player player = new Player(50, 50, 64, 64, "PLAYER");
+        player.createHealthBar();
+        player.setEasy();
+        assertEquals(30, player.getPlayerDamage(), delta);
+        player.damageIncrease();
+        assertEquals(500, player.getPlayerDamage(), delta);
+        player.timerManager();
+        assertEquals(500, player.getPlayerDamage(), delta);
+        Thread.sleep(9500);
+        player.timerManager();
+        assertEquals(500, player.getPlayerDamage(), delta);
+        Thread.sleep(500);
+        player.timerManager();
+        assertEquals(30, player.getPlayerDamage(), delta);
+    }
 }

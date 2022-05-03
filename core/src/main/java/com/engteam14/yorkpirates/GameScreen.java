@@ -303,10 +303,7 @@ public class GameScreen extends ScreenAdapter {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && elapsedTime - lastPause > 0.1f){
             gamePause();
         }
-//        if(Gdx.input.isKeyJustPressed(Input.Keys.H)){
-//            player.printStats();
-//            printElaspedTime();
-//        }
+
     }
 
     /**

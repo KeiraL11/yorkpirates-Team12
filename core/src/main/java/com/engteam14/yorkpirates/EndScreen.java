@@ -59,12 +59,14 @@ public class EndScreen extends ScreenAdapter {
         ImageButton quitB = new ImageButton(skin, "Quit");
         ImageButton restartB = new ImageButton(skin, "Restart");
 
+        // Left click the quit button, the game will quit
         quitB.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.exit();
             }
         });
 
+        // Left click the restart button, the game will restart
         restartB.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 try {
